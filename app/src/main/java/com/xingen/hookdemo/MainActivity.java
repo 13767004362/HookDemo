@@ -30,6 +30,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         findViewById(R.id.main_btn).setOnClickListener(this);
         this.dexClassLoader = new DexClassLoader(dexPath, cacheDir, null, this.getClassLoader());
         initHook();

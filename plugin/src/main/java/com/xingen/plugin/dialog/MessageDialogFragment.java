@@ -16,9 +16,7 @@ import android.widget.TextView;
 
 public class MessageDialogFragment extends DialogFragment {
     public static final String TAG=MessageDialogFragment.class.getSimpleName();
-    public MessageDialogFragment (){
-
-    }
+    public MessageDialogFragment (){}
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
