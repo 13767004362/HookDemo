@@ -41,7 +41,7 @@ public class ContextImplUtils {
             if (mPackageInfoField!=null){
                try {
                    mPackageInfoField.setAccessible(true);
-                  Object LoadedApk =  mClassLoaderField.get(context);
+                  Object LoadedApk =  mPackageInfoField.get(context);
                   Class<?> LoadedApkClass=LoadedApk.getClass();
                  mClassLoaderField= LoadedApkClass.getDeclaredField("mClassLoader");
                  mClassLoaderField.setAccessible(true);

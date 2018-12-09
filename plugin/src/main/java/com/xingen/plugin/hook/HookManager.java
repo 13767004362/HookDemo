@@ -16,7 +16,7 @@ public class HookManager {
             sCurrentActivityThreadField.setAccessible(true);
             Object ActivityThread = sCurrentActivityThreadField.get(null);
             //hook,替换掉Instrumentation
-            Field mInstrumentationField = ActivityThreadClass.getField("mInstrumentation");
+            Field mInstrumentationField = ActivityThreadClass.getDeclaredField("mInstrumentation");
             mInstrumentationField.setAccessible(true);
             InstrumentationFilter instrumentationFilter = new InstrumentationFilter();
             mInstrumentationField.set(ActivityThread, instrumentationFilter);
