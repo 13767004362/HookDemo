@@ -17,6 +17,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <!-- 替身Activity, 用来欺骗AMS  -->
+        <activity android:name=".hook.activity.StubActivity"></activity>
     </application>
 
 </manifest>

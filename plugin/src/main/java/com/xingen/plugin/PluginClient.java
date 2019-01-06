@@ -3,7 +3,7 @@ package com.xingen.plugin;
 import android.app.Activity;
 
 import com.xingen.plugin.dialog.MessageDialogFragment;
-import com.xingen.plugin.hook.HookManager;
+import com.xingen.plugin.hook.classloader.HookManager;
 
 
 /**

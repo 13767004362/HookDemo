@@ -1,4 +1,4 @@
-package com.xingen.plugin.hook;
+package com.xingen.plugin.hook.classloader;
 
 import android.app.Activity;
 import android.app.Instrumentation;

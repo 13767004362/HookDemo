@@ -1,4 +1,4 @@
-package com.xingen.plugin.hook;
+package com.xingen.plugin.hook.classloader;
 
 import java.lang.reflect.Field;
 
@@ -8,6 +8,8 @@ import java.lang.reflect.Field;
  */
 
 public class HookManager {
+
+
     public static void init() {
         try {
             //获取到ActivityThread
