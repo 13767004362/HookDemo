@@ -23,13 +23,6 @@ public class InstrumentationFilter  extends Instrumentation{
      */
     @Override
     public void callActivityOnCreate(Activity activity, Bundle icicle) {
-        try {
-            ClassLoader classLoader=InstrumentationFilter.class.getClassLoader();
-            ContextImplUtils.hookClassLoader(activity.getBaseContext(),classLoader);
-        }catch (Exception e){
-            e.printStackTrace();
-        }finally {
-            super.callActivityOnCreate(activity, icicle);
-        }
+        super.callActivityOnCreate(activity,icicle);
     }
 }

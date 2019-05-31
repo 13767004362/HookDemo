@@ -1,8 +1,9 @@
 package com.xingen.plugin;
 
 import android.app.Activity;
+import android.content.Context;
 
-import com.xingen.plugin.dialog.MessageDialogFragment;
+import com.xingen.plugin.fragment.MessageDialogFragment;
 import com.xingen.plugin.hook.classloader.HookManager;
 
 
@@ -15,6 +16,9 @@ public class PluginClient {
 
     public static void init(){
        HookManager.init();
+    }
+    public static void initClassLoader(Context context){
+        HookManager.initClassLoader(context);
     }
     public static void startMessageDialog(Activity activity){
         MessageDialogFragment.startDialog(activity);

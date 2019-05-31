@@ -1,5 +1,7 @@
 package com.xingen.plugin.hook.classloader;
 
+import android.content.Context;
+
 import java.lang.reflect.Field;
 
 /**
@@ -24,6 +26,20 @@ public class HookManager {
             mInstrumentationField.set(ActivityThread, instrumentationFilter);
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    /**
+     *  替换成
+     * @param context
+     */
+    public static void initClassLoader(Context context){
+        try {
+            ClassLoader classLoader=HookManager.class.getClassLoader();
+            ContextImplUtils.hookClassLoader(context,classLoader);
+        }catch (Exception e){
+            e.printStackTrace();
+        }finally {
         }
     }
 }

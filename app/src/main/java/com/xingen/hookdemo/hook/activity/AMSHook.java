@@ -126,14 +126,14 @@ public class AMSHook {
          */
         public  static  void recoverIntent(Message message){
             int LAUNCH_ACTIVITY=100;
-            try {
+    /*        try {
                 Class<?> ActivityThreadClass = Class.forName("android.app.ActivityThread$H");
                 Field LAUNCH_ACTIVITY_Filed = ActivityThreadClass.getDeclaredField("LAUNCH_ACTIVITY");
                 LAUNCH_ACTIVITY_Filed.setAccessible(true);
                 LAUNCH_ACTIVITY= (int)LAUNCH_ACTIVITY_Filed.get(null);
             }catch (Exception e){
                 e.printStackTrace();
-            }
+            }*/
 
             if (message.what==LAUNCH_ACTIVITY){
                 try {
