@@ -10,6 +10,7 @@ import android.view.View;
 
 import com.xingen.hookdemo.hook.activity.AMSHook;
 import com.xingen.hookdemo.hook.classLoader.ClassLoaderHookManager;
+import com.xingen.hookdemo.hook.receiver.ReceiverHookManager;
 import com.xingen.hookdemo.utils.Utils;
 
 import java.io.File;
@@ -31,14 +32,16 @@ public class MainActivity extends Activity implements View.OnClickListener {
         this.cacheDir = Utils.getCacheDir(newBase).getAbsolutePath();
         this.dexClassLoader = new DexClassLoader(dexPath, cacheDir, null, this.getClassLoader());
         ClassLoaderHookManager.init(new File(dexPath),new File(cacheDir+File.separator+"plugin.dex"),this.getClassLoader());
-    }
+        ReceiverHookManager.init(newBase,dexPath);
 
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         findViewById(R.id.main_load_plugin_btn).setOnClickListener(this);
         findViewById(R.id.main_hook_activity_btn).setOnClickListener(this);
+        findViewById(R.id.main_hook_receiver_btn).setOnClickListener(this);
 
     }
 
@@ -50,13 +53,21 @@ public class MainActivity extends Activity implements View.OnClickListener {
                 loadPlugin();
                 break;
             case R.id.main_hook_activity_btn:
-
-
                 loadTargetActivity();
+                break;
+            case R.id.main_hook_receiver_btn:
+            {
+                sendActionBroadcast();
+            }
                 break;
 
         }
-
+    }
+    private void sendActionBroadcast(){
+        final  String action="com.xingen.plugin.receiver.PluginReceiver";
+        Intent intent=new Intent();
+        intent.setAction(action);
+        sendBroadcast(intent);
     }
 
     /**
