@@ -36,7 +36,7 @@ public class Utils {
         InputStream in = null;
         OutputStream out = null;
         try {
-            in = context.getApplicationContext().getAssets().open(fileName);
+            in = context.getAssets().open(fileName);
             out = new FileOutputStream(desFile.getAbsolutePath());
             byte[] bytes = new byte[1024];
             int i;

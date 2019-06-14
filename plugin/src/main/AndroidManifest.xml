@@ -17,5 +17,10 @@
         <service android:name="com.xingen.plugin.service.PluginService">
         </service>
 
+        <provider
+            android:authorities="com.xingen.plugin.contentprovider.PluginContentProvider"
+            android:name="com.xingen.plugin.contentprovider.PluginContentProvider">
+
+        </provider>
     </application>
 </manifest>

@@ -2,16 +2,24 @@ package com.xingen.hookdemo;
 
 import android.app.Activity;
 import android.content.ComponentName;
+import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
+import android.widget.Button;
+import android.widget.Toast;
 
 import com.xingen.hookdemo.hook.ams.AMSHookManager;
 import com.xingen.hookdemo.hook.receiver.ReceiverHookManager;
 import com.xingen.hookdemo.hook.service.ServiceHookManager;
 
 import java.lang.reflect.Method;
+import java.util.Random;
 
 public class MainActivity extends Activity implements View.OnClickListener {
 
@@ -27,11 +35,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
         String subPackageName = getPackageName();
         AMSHookManager.init(subPackageName);
         // hook 广播
-        ReceiverHookManager.init(newBase, apkFilePath);
-        // hook service
-        ServiceHookManager.init(newBase, apkFilePath);
-        // hook ContentProvider
-
+        ReceiverHookManager.init(this, apkFilePath);
     }
 
     @Override
@@ -42,6 +46,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
         findViewById(R.id.main_hook_activity_btn).setOnClickListener(this);
         findViewById(R.id.main_hook_receiver_btn).setOnClickListener(this);
         findViewById(R.id.main_hook_service_btn).setOnClickListener(this);
+        findViewById(R.id.main_hook_content_provider).setOnClickListener(this);
 
     }
 
@@ -62,10 +67,51 @@ public class MainActivity extends Activity implements View.OnClickListener {
                 startPluginService();
             }
             break;
+            case R.id.main_hook_content_provider: {
+                useContentProvider(v);
+            }
+            break;
 
         }
     }
-    private void startPluginService(){
+
+    private void useContentProvider(View view) {
+        final Uri uri = Uri.parse("content://" + PluginConfig.provider_name);
+        final String column_name = "name";
+        Button button = (Button) view;
+        final String text_query = "Hook 使用content_provider 查询";
+        final String text_insert = "Hook 使用content_provider 插入";
+        ContentResolver contentResolver = getContentResolver();
+        if (text_query.equals(button.getText().toString())) {// 查询
+            Cursor cursor = contentResolver.query(uri, null, null, null, null);
+            try {
+                StringBuffer stringBuffer = new StringBuffer();
+                if (cursor != null && cursor.moveToFirst()) {
+                    do {
+                        stringBuffer.append(cursor.getString(cursor.getColumnIndex(column_name)));
+                        stringBuffer.append(",");
+                    } while (cursor.moveToNext());
+                }
+                if (!TextUtils.isEmpty(stringBuffer.toString())) {
+                    Toast.makeText(getApplicationContext(), "查询到的名字：" + stringBuffer.toString(), Toast.LENGTH_SHORT).show();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                if (cursor != null) {
+                    cursor.close();
+                }
+                button.setText(text_insert);
+            }
+        } else { // 插入
+            ContentValues contentValues = new ContentValues();
+            contentValues.put(column_name, "android " + (int) (Math.random() * 100));
+            contentResolver.insert(uri, contentValues);
+            button.setText(text_query);
+        }
+    }
+
+    private void startPluginService() {
         ComponentName componentName = new ComponentName(PluginConfig.package_name, PluginConfig.service_name);
         startService(new Intent().setComponent(componentName));
     }

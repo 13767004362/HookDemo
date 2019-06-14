@@ -21,10 +21,17 @@
         <!-- 替身Activity, 用来欺骗AMS  -->
         <activity android:name=".hook.activity.StubActivity"></activity>
         <!-- service的动态代理  -->
-        <service android:name=".hook.service.ProxyService"
-         >
-
+        <service android:name=".hook.service.ProxyService">
         </service>
+
+        <!-- provider的动态代理  -->
+        <provider
+            android:authorities="com.xingen.hookdemo.hook.contentprovider.ProxyContentProvider"
+            android:name="com.xingen.hookdemo.hook.contentprovider.ProxyContentProvider"
+            android:exported="true"
+            android:process=":plugins">
+
+        </provider>
     </application>
 
 </manifest>

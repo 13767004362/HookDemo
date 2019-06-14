@@ -33,7 +33,7 @@ public class ServiceHookManager {
 
     public static void init(Context context, String apkFilePath) {
         preloadParseService(apkFilePath);
-        appContext = context.getApplicationContext();
+        appContext = context;
     }
 
     /**

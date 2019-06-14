@@ -18,22 +18,33 @@
     <Button
         android:id="@+id/main_hook_activity_btn"
         android:layout_width="wrap_content"
-        android:text=" hook 加载activity"
+        android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        app:layout_constraintTop_toBottomOf="@+id/main_hook_fragment_btn"
-        android:layout_height="wrap_content" />
+        android:text=" hook 加载activity"
+        app:layout_constraintTop_toBottomOf="@+id/main_hook_fragment_btn" />
+
     <Button
         android:id="@+id/main_hook_receiver_btn"
         android:layout_width="wrap_content"
-         android:text="Hook 发送广播"
+        android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        app:layout_constraintTop_toBottomOf="@+id/main_hook_activity_btn"
-        android:layout_height="wrap_content" />
+        android:text="Hook 发送广播"
+        app:layout_constraintTop_toBottomOf="@+id/main_hook_activity_btn" />
+
     <Button
         android:id="@+id/main_hook_service_btn"
         android:layout_width="wrap_content"
-        android:text="Hook 启动Service"
+        android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        app:layout_constraintTop_toBottomOf="@+id/main_hook_receiver_btn"
-        android:layout_height="wrap_content" />
+        android:text="Hook 启动Service"
+        app:layout_constraintTop_toBottomOf="@+id/main_hook_receiver_btn" />
+
+    <Button
+        android:id="@+id/main_hook_content_provider"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="Hook 使用content_provider 查询"
+        app:layout_constraintTop_toBottomOf="@+id/main_hook_service_btn" />
+
 </android.support.constraint.ConstraintLayout>
