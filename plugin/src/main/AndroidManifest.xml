@@ -9,13 +9,13 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
         <receiver android:name="com.xingen.plugin.receiver.PluginReceiver">
             <intent-filter>
                 <action android:name="com.xingen.plugin.receiver.PluginReceiver"></action>
             </intent-filter>
         </receiver>
+        <service android:name="com.xingen.plugin.service.PluginService">
+        </service>
 
     </application>
-
 </manifest>

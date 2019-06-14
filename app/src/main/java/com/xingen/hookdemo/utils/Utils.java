@@ -9,6 +9,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import dalvik.system.DexFile;
+
 /**
  * Created by ${新根} on 2018/6/9.
  * blog博客:http://blog.csdn.net/hexingen
@@ -20,11 +22,10 @@ public class Utils {
         String filePath = dir.getAbsolutePath() + File.separator + fileName;
         try {
             File desFile = new File(filePath);
-            if (!desFile.exists()) {
-                desFile.createNewFile();
-                copyFiles(context, fileName, desFile);
+            if (desFile.exists()) {
+                desFile.delete();
             }
-
+            copyFiles(context, fileName, desFile);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -76,5 +77,6 @@ public class Utils {
             cache.mkdirs();
         return cache;
     }
+
 
 }

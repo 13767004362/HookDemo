@@ -40,7 +40,7 @@ public class ReceiverHookManager {
                 BroadcastReceiver broadcastReceiver=(BroadcastReceiver) classLoader.loadClass(activityInfo.name).newInstance();
                 if (intentFilters!=null&&broadcastReceiver!=null){
                     for ( IntentFilter intentFilter:intentFilters){
-                        context.registerReceiver(broadcastReceiver,intentFilter);
+                         context.getApplicationContext().registerReceiver(broadcastReceiver,intentFilter);
                     }
                 }
             }

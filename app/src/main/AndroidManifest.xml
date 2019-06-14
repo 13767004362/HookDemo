@@ -20,6 +20,11 @@
         </activity>
         <!-- 替身Activity, 用来欺骗AMS  -->
         <activity android:name=".hook.activity.StubActivity"></activity>
+        <!-- service的动态代理  -->
+        <service android:name=".hook.service.ProxyService"
+         >
+
+        </service>
     </application>
 
 </manifest>

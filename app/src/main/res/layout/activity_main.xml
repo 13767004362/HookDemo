@@ -7,7 +7,7 @@
     tools:context="com.xingen.hookdemo.MainActivity">
 
     <Button
-        android:id="@+id/main_load_plugin_btn"
+        android:id="@+id/main_hook_fragment_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="调用插件中的DialogFragment"
@@ -20,13 +20,20 @@
         android:layout_width="wrap_content"
         android:text=" hook 加载activity"
         android:layout_marginTop="10dp"
-        app:layout_constraintTop_toBottomOf="@+id/main_load_plugin_btn"
+        app:layout_constraintTop_toBottomOf="@+id/main_hook_fragment_btn"
         android:layout_height="wrap_content" />
     <Button
         android:id="@+id/main_hook_receiver_btn"
         android:layout_width="wrap_content"
          android:text="Hook 发送广播"
+        android:layout_marginTop="10dp"
         app:layout_constraintTop_toBottomOf="@+id/main_hook_activity_btn"
         android:layout_height="wrap_content" />
-
+    <Button
+        android:id="@+id/main_hook_service_btn"
+        android:layout_width="wrap_content"
+        android:text="Hook 启动Service"
+        android:layout_marginTop="10dp"
+        app:layout_constraintTop_toBottomOf="@+id/main_hook_receiver_btn"
+        android:layout_height="wrap_content" />
 </android.support.constraint.ConstraintLayout>

@@ -1,4 +1,4 @@
-package com.xingen.hookdemo.hook.activity;
+package com.xingen.hookdemo.hook.ams;
 
 import android.os.Handler;
 import android.os.Message;
@@ -18,7 +18,7 @@ public class ActivityThreadHandlerCallback implements Handler.Callback {
 
     @Override
     public boolean handleMessage(Message msg) {
-        AMSHook.Utils.recoverIntent(msg);
+        AMSHookManager.Utils.recoverActivityIntent(msg);
         activityThreadHandler.handleMessage(msg);
         return true;
     }

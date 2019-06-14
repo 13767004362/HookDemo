@@ -1,14 +1,15 @@
-package com.xingen.hookdemo.hook.activity;
+package com.xingen.hookdemo.hook.ams;
 
 import android.content.ComponentName;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
-import android.os.PowerManager;
+
+import com.xingen.hookdemo.hook.activity.StubActivity;
+import com.xingen.hookdemo.hook.service.ProxyService;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Proxy;
 
 /**
@@ -18,7 +19,7 @@ import java.lang.reflect.Proxy;
  * Hook AMS
  */
 
-public class AMSHook {
+public class AMSHookManager {
     private static String targetPackageName;
     public static final String KEY_RAW_INTENT = "raw_intent";
     private  static  boolean isInIt=false;
@@ -92,14 +93,29 @@ public class AMSHook {
         mCallBackField.set(mHandler, new ActivityThreadHandlerCallback(mHandler));
     }
 
+    public static String getTargetPackageName() {
+        return targetPackageName;
+    }
+
     public static final class Utils {
 
+
+        public static Intent filter(Object[] args){
+            Intent intent=null;
+            for (int i = 0; i < args.length; i++) {
+                if (args[i] instanceof Intent) {
+                    intent=(Intent) args[i];
+                    break;
+                }
+            }
+            return intent;
+        }
         /**
          * 替换成代替的activity,绕过ams检查
          *
          * @param args
          */
-        public static void replaceIntent(Object[] args) {
+        public static void replaceActivityIntent(Object[] args) {
             Intent rawIntent;
             int index = 0;
 
@@ -120,21 +136,36 @@ public class AMSHook {
             args[index] = subIntent;
         }
 
+
+        /**
+         *  替换成ProxyService
+         * @param args
+         */
+        public static void replaceServiceIntent(Object[] args){
+            Intent rawIntent;
+            int index=0;
+            for (int i=0;i<args.length;++i){
+                 if (args[i] instanceof Intent){
+                     index=i;
+                     break;
+                 }
+            }
+            rawIntent=(Intent) args[index];
+            // 构建一个ProxyService的intent
+            Intent subIntent=new Intent();
+            subIntent.setClassName(targetPackageName, ProxyService.class.getName());
+            // 将信息存储在intent中
+            subIntent.putExtra(KEY_RAW_INTENT,rawIntent);
+            args[index]=subIntent;
+        }
+
+
         /**
          * 恢复成要启动的activity
          * @param message
          */
-        public  static  void recoverIntent(Message message){
-            int LAUNCH_ACTIVITY=100;
-    /*        try {
-                Class<?> ActivityThreadClass = Class.forName("android.app.ActivityThread$H");
-                Field LAUNCH_ACTIVITY_Filed = ActivityThreadClass.getDeclaredField("LAUNCH_ACTIVITY");
-                LAUNCH_ACTIVITY_Filed.setAccessible(true);
-                LAUNCH_ACTIVITY= (int)LAUNCH_ACTIVITY_Filed.get(null);
-            }catch (Exception e){
-                e.printStackTrace();
-            }*/
-
+        public  static  void recoverActivityIntent(Message message){
+           final int LAUNCH_ACTIVITY=100;
             if (message.what==LAUNCH_ACTIVITY){
                 try {
                     Class<?>  ActivityClientRecordClass=message.obj.getClass();
