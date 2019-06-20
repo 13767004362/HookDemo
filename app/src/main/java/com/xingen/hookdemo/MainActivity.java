@@ -6,16 +6,20 @@ import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.net.Uri;
+import android.net.wifi.aware.PublishConfig;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.xingen.hookdemo.hook.ams.AMSHookManager;
 import com.xingen.hookdemo.hook.receiver.ReceiverHookManager;
+import com.xingen.hookdemo.hook.resource.ResourceHookManager;
 import com.xingen.hookdemo.hook.service.ServiceHookManager;
 
 import java.lang.reflect.Method;
@@ -36,6 +40,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
         AMSHookManager.init(subPackageName);
         // hook 广播
         ReceiverHookManager.init(this, apkFilePath);
+
     }
 
     @Override
@@ -47,7 +52,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
         findViewById(R.id.main_hook_receiver_btn).setOnClickListener(this);
         findViewById(R.id.main_hook_service_btn).setOnClickListener(this);
         findViewById(R.id.main_hook_content_provider).setOnClickListener(this);
-
+        findViewById(R.id.main_hook_resource).setOnClickListener(this);
     }
 
     @Override
@@ -72,7 +77,16 @@ public class MainActivity extends Activity implements View.OnClickListener {
             }
             break;
 
+            case R.id.main_hook_resource:
+                usePluginResource();
+                break;
+
         }
+    }
+
+    private void usePluginResource() {
+        ImageView imageView = findViewById(R.id.main_show_plugin_img_iv);
+        imageView.setImageDrawable(ResourceHookManager.getDrawable("plugin_img", PluginConfig.package_name));
     }
 
     private void useContentProvider(View view) {
