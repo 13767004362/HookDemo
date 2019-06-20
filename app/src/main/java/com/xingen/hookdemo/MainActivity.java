@@ -86,7 +86,8 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
     private void usePluginResource() {
         ImageView imageView = findViewById(R.id.main_show_plugin_img_iv);
-        imageView.setImageDrawable(ResourceHookManager.getDrawable("plugin_img", PluginConfig.package_name));
+        int imgId=ResourceHookManager.getDrawableId("plugin_img", PluginConfig.package_name);
+        imageView.setImageDrawable(getResources().getDrawable(imgId));
     }
 
     private void useContentProvider(View view) {

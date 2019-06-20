@@ -22,7 +22,9 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
-
+    aaptOptions {
+        aaptOptions.additionalParameters '--PLUG-resoure-id', '0x72'
+    }
 }
 
 dependencies {

@@ -1,5 +1,6 @@
 package com.xingen.hookdemo.hook.classLoader;
 
+import android.os.Build;
 import android.sax.Element;
 import android.util.Log;
 import android.widget.EditText;
@@ -50,10 +51,16 @@ public class ClassLoaderHookManager {
             Log.i(TAG, " 查询的类型 " + elementClass.getName());
             // 创建新的ElementsField数组
             Object[] newElementsArray = (Object[]) Array.newInstance(elementClass, oldElementsArray.length + 1);
-
-            // 构造插件Element(File file, boolean isDirectory, File zip, DexFile dexFile) 这个构造函数
-            Constructor<?> constructor = elementClass.getConstructor(File.class, boolean.class, File.class, DexFile.class);
-            Object o = constructor.newInstance(apkFile, false, apkFile, dexFile);
+            Object o;
+            if (Build.VERSION.SDK_INT<Build.VERSION_CODES.O){
+                // 构造插件Element(File file, boolean isDirectory, File zip, DexFile dexFile) 这个构造函数
+                Constructor<?> constructor = elementClass.getConstructor(File.class, boolean.class, File.class, DexFile.class);
+                 o = constructor.newInstance(apkFile, false, apkFile, dexFile);
+            }else{
+               // 构造插件的 Element，构造函数参数：(DexFile dexFile, File file)
+                Constructor<?> constructor = elementClass.getConstructor(DexFile.class,File.class);
+               o= constructor.newInstance(dexFile,apkFile);
+            }
             Object[] toAddElementArray = new Object[]{o};
             // 把原始的elements复制进去
             System.arraycopy(oldElementsArray, 0, newElementsArray, 0, oldElementsArray.length);
