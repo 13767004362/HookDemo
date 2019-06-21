@@ -25,6 +25,8 @@ import com.xingen.hookdemo.hook.service.ServiceHookManager;
 import java.lang.reflect.Method;
 import java.util.Random;
 
+import dalvik.system.BaseDexClassLoader;
+
 public class MainActivity extends Activity implements View.OnClickListener {
 
 

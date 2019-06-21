@@ -2,6 +2,8 @@ package com.xingen.hookdemo.hook.classLoader;
 
 import android.os.Build;
 import android.sax.Element;
+import android.system.ErrnoException;
+import android.system.StructStat;
 import android.util.Log;
 import android.widget.EditText;
 
@@ -10,6 +12,9 @@ import java.io.IOException;
 import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
 
 import dalvik.system.BaseDexClassLoader;
 import dalvik.system.DexClassLoader;
@@ -34,6 +39,73 @@ public class ClassLoaderHookManager {
         }
     }
 
+    /**
+     * 加载插件的c++库（待完成）
+     *
+     * @param librarySearchPath
+     * @param appClassLoader
+     */
+    private static void loadNative(String librarySearchPath, ClassLoader appClassLoader) {
+
+        try {
+            // 获取到DexPathList对象
+            Class<?> baseDexClassLoaderClass = DexClassLoader.class.getSuperclass();
+            Field pathListField = baseDexClassLoaderClass.getDeclaredField("pathList");
+            pathListField.setAccessible(true);
+            Object dexPathList = pathListField.get(appClassLoader);
+            /**
+             * 接下来,合并宿主so,系统so,插件so库
+             */
+            Class<?> DexPathListClass = dexPathList.getClass();
+            File pluginNativeLibraryDir = new File(librarySearchPath);
+            if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP_MR1) {
+                // 先创建一个汇总so库的文件夹,收集全部
+                List<File> allNativeLibDirList = new ArrayList<>();
+                // 先添加插件的so库地址
+                allNativeLibDirList.add(pluginNativeLibraryDir);
+                // 获取到宿主的so库地址
+                Field nativeLibraryDirectoriesField = DexPathListClass.getDeclaredField("nativeLibraryDirectories");
+                nativeLibraryDirectoriesField.setAccessible(true);
+                List<File> old_nativeLibraryDirectories = (List<File>) nativeLibraryDirectoriesField.get(dexPathList);
+                allNativeLibDirList.addAll(old_nativeLibraryDirectories);
+                // 获取到system的so库地址
+                Field systemNativeLibraryDirectoriesField = DexPathListClass.getDeclaredField("systemNativeLibraryDirectories");
+                systemNativeLibraryDirectoriesField.setAccessible(true);
+                List<File> systemNativeLibraryDirectories = (List<File>) systemNativeLibraryDirectoriesField.get(dexPathList);
+                allNativeLibDirList.addAll(systemNativeLibraryDirectories);
+                //通过makePathElements获取到c++存放的Element
+                Method makePathElementsMethod = DexPathListClass.getDeclaredMethod("makePathElements", List.class, List.class, ClassLoader.class);
+                makePathElementsMethod.setAccessible(true);
+                Object[] allNativeLibraryPathElements = (Object[]) makePathElementsMethod.invoke(null, allNativeLibDirList, new ArrayList<IOException>(), appClassLoader);
+                //将合并宿主和插件的so库，重新设置进去
+                Field nativeLibraryPathElementsField = DexPathListClass.getDeclaredField("nativeLibraryPathElements");
+                nativeLibraryPathElementsField.setAccessible(true);
+                nativeLibraryPathElementsField.set(dexPathList, allNativeLibraryPathElements);
+            } else {
+                // 获取到宿主的so库地址
+                Field nativeLibraryDirectoriesField = DexPathListClass.getDeclaredField("nativeLibraryDirectories");
+                nativeLibraryDirectoriesField.setAccessible(true);
+                File[] oldNativeDirs = (File[]) nativeLibraryDirectoriesField.get(dexPathList);
+                int oldNativeLibraryDirSize = oldNativeDirs.length;
+                // 创建一个汇总宿主，插件的so库地址的数组
+                File[] totalNativeLibraryDir = new File[oldNativeLibraryDirSize + 1];
+                System.arraycopy(oldNativeDirs, 0, totalNativeLibraryDir, 0, oldNativeLibraryDirSize);
+                totalNativeLibraryDir[oldNativeLibraryDirSize] = pluginNativeLibraryDir;
+                // 替换成合并的so库资源数组
+                nativeLibraryDirectoriesField.set(dexPathList, totalNativeLibraryDir);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 加载插件的dex文件
+     *
+     * @param apkFile
+     * @param dexFile
+     * @param appClassLoader
+     */
     private static void loadPluginDex(File apkFile, DexFile dexFile, ClassLoader appClassLoader) {
         try {
             Class<?> baseDexClassLoaderClass = DexClassLoader.class.getSuperclass();
@@ -52,14 +124,14 @@ public class ClassLoaderHookManager {
             // 创建新的ElementsField数组
             Object[] newElementsArray = (Object[]) Array.newInstance(elementClass, oldElementsArray.length + 1);
             Object o;
-            if (Build.VERSION.SDK_INT<Build.VERSION_CODES.O){
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
                 // 构造插件Element(File file, boolean isDirectory, File zip, DexFile dexFile) 这个构造函数
                 Constructor<?> constructor = elementClass.getConstructor(File.class, boolean.class, File.class, DexFile.class);
-                 o = constructor.newInstance(apkFile, false, apkFile, dexFile);
-            }else{
-               // 构造插件的 Element，构造函数参数：(DexFile dexFile, File file)
-                Constructor<?> constructor = elementClass.getConstructor(DexFile.class,File.class);
-               o= constructor.newInstance(dexFile,apkFile);
+                o = constructor.newInstance(apkFile, false, apkFile, dexFile);
+            } else {
+                // 构造插件的 Element，构造函数参数：(DexFile dexFile, File file)
+                Constructor<?> constructor = elementClass.getConstructor(DexFile.class, File.class);
+                o = constructor.newInstance(dexFile, apkFile);
             }
             Object[] toAddElementArray = new Object[]{o};
             // 把原始的elements复制进去
@@ -71,13 +143,14 @@ public class ClassLoaderHookManager {
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
 
+    }
 
     private static final class DexParse {
 
         /**
          * 从.apk .jar .zip 解析出 dex 文件
+         *
          * @param zipFilePath
          * @param optimizedDirectory
          * @return
