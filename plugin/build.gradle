@@ -15,7 +15,11 @@ android {
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
     }
-
+    sourceSets {
+        main {
+            jniLibs.srcDirs = ['libs']
+        }
+    }
     buildTypes {
         release {
             minifyEnabled false
@@ -25,6 +29,8 @@ android {
     aaptOptions {
         aaptOptions.additionalParameters '--PLUG-resoure-id', '0x72'
     }
+
+
 }
 
 dependencies {

@@ -1,11 +1,16 @@
 package com.xingen.hookdemo.hook.classLoader;
 
+import android.content.Context;
+import android.content.pm.ProviderInfo;
 import android.os.Build;
 import android.sax.Element;
 import android.system.ErrnoException;
 import android.system.StructStat;
+import android.text.TextUtils;
 import android.util.Log;
 import android.widget.EditText;
+
+import com.xingen.hookdemo.utils.Utils;
 
 import java.io.File;
 import java.io.IOException;
@@ -14,6 +19,8 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 
 import dalvik.system.BaseDexClassLoader;
@@ -27,27 +34,72 @@ import dalvik.system.DexFile;
 public class ClassLoaderHookManager {
     private static final String TAG = ClassLoaderHookManager.class.getSimpleName();
 
-    public static void init(String zipFilePath, String optimizedDirectory) {
+    public static void init(Context context, String zipFilePath, String optimizedDirectory) {
         try {
             // 先解压dex文件
             DexFile dexFile = DexParse.parseDex(zipFilePath, optimizedDirectory);
-            // 将插件dex加载到主进程的classloader
+            // 将插件dex加载到主进程的classloader, dex文件可以放sdcard或者手机内部磁盘中，但so库只能放在手机内部磁盘中data/data下
             ClassLoader appClassLoader = ClassLoaderHookManager.class.getClassLoader();
             loadPluginDex(new File(zipFilePath), dexFile, appClassLoader);
+            loadNative(context, zipFilePath, optimizedDirectory, appClassLoader);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     /**
-     * 加载插件的c++库（待完成）
+     * 加载插件的c++库
      *
-     * @param librarySearchPath
+     * @param optimizedDirectory
      * @param appClassLoader
      */
-    private static void loadNative(String librarySearchPath, ClassLoader appClassLoader) {
+    private static void loadNative(Context context, String zipFilePath, String optimizedDirectory, ClassLoader appClassLoader) {
 
         try {
+            String librarySearchPath = null;
+            try {
+                Utils.unZipFolder(zipFilePath, optimizedDirectory);
+                librarySearchPath = new File(optimizedDirectory + File.separator + "lib").getAbsolutePath();
+                // 需要删除其余的文件,防止占用磁盘空间。
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            if (TextUtils.isEmpty(librarySearchPath)) return;
+            // 查询到so库中的文件目录
+            File abi_file_dir = null;
+            File dirFile = new File(librarySearchPath);
+            File[] files = dirFile.listFiles();
+            for (File file : files) {
+                if (file != null && file.exists() && file.isDirectory()) {
+                    final String abi = Build.CPU_ABI;
+                    // 获取当前应用程序支持cpu(非手机cpu),配到对应的so库。
+                    // 注意点： 若是宿主没有32位数Zygote，是无法加载 插件中32位so库。
+                    if (file.getName().contains(abi)) {
+                        abi_file_dir = file;
+                        break;
+                    }
+                }
+            }
+            File mLibDir = null;
+            try {
+                // so库，不可以放在sdcard中。
+                String mLibDirPath = context.getCacheDir() + File.separator + "lib" + File.separator + Build.CPU_ABI;
+                mLibDir = new File(mLibDirPath);
+                if (!mLibDir.exists()) {
+                    mLibDir.mkdirs();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            List<File> pluginNativeLibraryDirList = new LinkedList<>();
+            if (mLibDir != null && abi_file_dir != null) {
+                File[] so_file_array = abi_file_dir.listFiles();
+                for (File file : so_file_array) {
+                    File so_file = new File(mLibDir.getAbsolutePath() + File.separator + file.getName());
+                    Utils.copyFiles(file.getAbsolutePath(), so_file.getAbsolutePath());
+                    pluginNativeLibraryDirList.add(mLibDir);
+                }
+            }
             // 获取到DexPathList对象
             Class<?> baseDexClassLoaderClass = DexClassLoader.class.getSuperclass();
             Field pathListField = baseDexClassLoaderClass.getDeclaredField("pathList");
@@ -57,12 +109,11 @@ public class ClassLoaderHookManager {
              * 接下来,合并宿主so,系统so,插件so库
              */
             Class<?> DexPathListClass = dexPathList.getClass();
-            File pluginNativeLibraryDir = new File(librarySearchPath);
             if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP_MR1) {
                 // 先创建一个汇总so库的文件夹,收集全部
                 List<File> allNativeLibDirList = new ArrayList<>();
                 // 先添加插件的so库地址
-                allNativeLibDirList.add(pluginNativeLibraryDir);
+                allNativeLibDirList.addAll(pluginNativeLibraryDirList);
                 // 获取到宿主的so库地址
                 Field nativeLibraryDirectoriesField = DexPathListClass.getDeclaredField("nativeLibraryDirectories");
                 nativeLibraryDirectoriesField.setAccessible(true);
@@ -88,9 +139,11 @@ public class ClassLoaderHookManager {
                 File[] oldNativeDirs = (File[]) nativeLibraryDirectoriesField.get(dexPathList);
                 int oldNativeLibraryDirSize = oldNativeDirs.length;
                 // 创建一个汇总宿主，插件的so库地址的数组
-                File[] totalNativeLibraryDir = new File[oldNativeLibraryDirSize + 1];
+                File[] totalNativeLibraryDir = new File[oldNativeLibraryDirSize + pluginNativeLibraryDirList.size()];
                 System.arraycopy(oldNativeDirs, 0, totalNativeLibraryDir, 0, oldNativeLibraryDirSize);
-                totalNativeLibraryDir[oldNativeLibraryDirSize] = pluginNativeLibraryDir;
+                for (int i = 0; i < totalNativeLibraryDir.length; ++i) {
+                    totalNativeLibraryDir[oldNativeLibraryDirSize + i] = pluginNativeLibraryDirList.get(i);
+                }
                 // 替换成合并的so库资源数组
                 nativeLibraryDirectoriesField.set(dexPathList, totalNativeLibraryDir);
             }

@@ -43,6 +43,8 @@ public class MainActivity extends Activity implements View.OnClickListener {
         // hook 广播
         ReceiverHookManager.init(this, apkFilePath);
 
+
+
     }
 
     @Override
@@ -55,6 +57,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
         findViewById(R.id.main_hook_service_btn).setOnClickListener(this);
         findViewById(R.id.main_hook_content_provider).setOnClickListener(this);
         findViewById(R.id.main_hook_resource).setOnClickListener(this);
+        findViewById(R.id.main_hook_native).setOnClickListener(this);
     }
 
     @Override
@@ -82,10 +85,29 @@ public class MainActivity extends Activity implements View.OnClickListener {
             case R.id.main_hook_resource:
                 usePluginResource();
                 break;
+            case R.id.main_hook_native:{
+                useNativeLibrary();
+            }
+                break;
 
         }
     }
 
+    private void useNativeLibrary(){
+        try {
+            Class<?> mClass=appMainClassLoader.loadClass(PluginConfig.native_class_name);
+            Object instance= mClass.newInstance();
+            Method  getShowContentMethod=mClass.getDeclaredMethod("getShowContent");
+            getShowContentMethod.setAccessible(true);
+           String content=(String) getShowContentMethod.invoke(instance);
+           if (!TextUtils.isEmpty(content)){
+               Toast.makeText(this,content,Toast.LENGTH_SHORT).show();
+           }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+    }
     private void usePluginResource() {
         ImageView imageView = findViewById(R.id.main_show_plugin_img_iv);
         int imgId=ResourceHookManager.getDrawableId("plugin_img", PluginConfig.package_name);

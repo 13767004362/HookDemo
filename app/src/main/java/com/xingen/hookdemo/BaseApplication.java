@@ -10,6 +10,8 @@ import com.xingen.hookdemo.hook.resource.ResourceHookManager;
 import com.xingen.hookdemo.hook.service.ServiceHookManager;
 import com.xingen.hookdemo.utils.Utils;
 
+import java.io.File;
+
 import me.weishu.reflection.Reflection;
 
 /**
@@ -38,10 +40,13 @@ public class BaseApplication extends Application {
     }
     private void loadPluginDex(Context context) {
         // 先拷贝assets 下的apk，写入磁盘中。
-        zipFilePath = Utils.copyFiles(context, PluginConfig.apk_file_name);
-        String optimizedDirectory = Utils.getCacheDir(context).getAbsolutePath();
+        File zipFile =  new File(Utils.getCacheDir(context).getAbsolutePath()+File.separator+PluginConfig.apk_file_name);
+        final  String asset_file_name="plugin.apk";
+        Utils.copyFiles(context, asset_file_name,zipFile);
+        zipFilePath=zipFile.getAbsolutePath();
+        String optimizedDirectory = new File(Utils.getCacheDir(context).getAbsolutePath()+File.separator+"plugin").getAbsolutePath();
         // 加载插件dex
-        ClassLoaderHookManager.init(zipFilePath, optimizedDirectory);
+        ClassLoaderHookManager.init(context,zipFilePath, optimizedDirectory);
         //加载插件资源
         ResourceHookManager.init(context,zipFilePath);
         // hook service ，解析多进程的service 。多进程，会重复走onCreate()

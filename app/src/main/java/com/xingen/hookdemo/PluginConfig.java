@@ -14,12 +14,13 @@ import java.io.File;
  */
 public final class PluginConfig {
 
-    public static final String apk_file_name = "plugin.apk";
+    public static final String apk_file_name = "plugin.zip";
     public static final String package_name ="com.xingen.plugin";
     public static final String activity_name="com.xingen.plugin.activity.TargetActivity";
     public  static final  String receiver_action="com.xingen.plugin.receiver.PluginReceiver";
     public static final String service_name="com.xingen.plugin.service.PluginService";
     public static final String provider_name="com.xingen.plugin.contentprovider.PluginContentProvider";
+    public static final String native_class_name="com.xingen.plugin.NativeCodeTest";
 
 
 
