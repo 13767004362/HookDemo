@@ -6,7 +6,7 @@
 **注意点**：若是实际项目中使用，推举使用成熟的插件化框架，存在的bug较少。
 
 
-**插件化教程核心点**: 
+**插件化教程核心点**: 围绕Android 7.0 framewok层讲解相应的源码
 
 - Android 插件化之ClassLoader加载Dex文件
 - Android 插件化之ClassLoader加载so库
