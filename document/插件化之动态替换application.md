@@ -6,7 +6,7 @@
 启动应用进程后,会通知AMS,最终回到ActivityThread中的Handler处理，H.BIND_APPLICATION标识对应的动作,去开始创建Application对象。
 
 Handler中回调处理：
-```
+```java
 private class H extends Handler {
     
     public void handleMessage(Message msg) {
@@ -23,7 +23,7 @@ private class H extends Handler {
 接下来，调用handleBindApplication进一步处理。
 
 handleBindApplication():
-```
+```java
  private void handleBindApplication(AppBindData data) {
      //初始化一系列的参数，例如，日期，AsyncTask配置。
       // 创建Instrumentation对象和ContextImpl对象
@@ -67,7 +67,7 @@ handleBindApplication():
 [LoadedApk类](https://www.androidos.net.cn/android/7.0.0_r31/xref/frameworks/base/core/java/android/app/LoadedApk.java)(来源：`frameworks/base/core/java/android/app/LoadedApk`)
 
 makeApplication():
-```
+```java
   public Application makeApplication(boolean forceDefaultAppClass,
             Instrumentation instrumentation) {
         if (mApplication != null) {
@@ -117,7 +117,7 @@ makeApplication():
 
 [Instrumentation类](https://www.androidos.net.cn/android/7.0.0_r31/xref/frameworks/base/core/java/android/app/Instrumentation.java)
 newApplication():
-```
+```java
   public Application newApplication(ClassLoader cl, String className, Context context)
             throws InstantiationException, IllegalAccessException, 
             ClassNotFoundException {
@@ -133,7 +133,7 @@ newApplication():
 ```
 从上述可知，会调用Application生命周期中的`attch()`方法。
 
-```
+```java
    /**
      * @hide
      */
@@ -153,7 +153,7 @@ newApplication():
 接下来，继续查看Instrumentation`callApplicationOnCreate()`。
 
 callApplicationOnCreate():
-```
+```java
 public void callApplicationOnCreate(Application app) {
         app.onCreate();
 }
@@ -176,7 +176,7 @@ public void callApplicationOnCreate(Application app) {
 带着以上问题，针对性处理,这样就实现了Application的动态代理。
 
 编写插件：
-```
+```java
 public class DelegateApplication extends Application {
 private static final String TAG=DelegateApplication.class.getSimpleName();
     @Override
@@ -187,7 +187,7 @@ private static final String TAG=DelegateApplication.class.getSimpleName();
 }
 ```
 在AndroidManifest.xml中注册：
-```
+```java
     <meta-data
             android:name="application"
             android:value="com.xingen.plugin.DelegateApplication">
@@ -197,7 +197,7 @@ private static final String TAG=DelegateApplication.class.getSimpleName();
 接下来，在宿主中，编写Hook大法：
 
 先解析插件中meta标签，获取Application的名字。
-```
+```java
    /**
      * 解析出插件中meta信息
      *
@@ -227,7 +227,7 @@ private static final String TAG=DelegateApplication.class.getSimpleName();
 ```
 
 接下来，开始Hook：
-```
+```java
  /**
      * hook 替换原有的代理Application
      *
@@ -293,7 +293,7 @@ private static final String TAG=DelegateApplication.class.getSimpleName();
     }
 ```
 当然，ContentProvider会持有代理的Application,需要特殊处理一下：
-```
+```java
  /**
      * 修改已经存在ContentProvider中application
      *
@@ -326,7 +326,7 @@ private static final String TAG=DelegateApplication.class.getSimpleName();
     }
 ```
 在宿主中Application子类中调用：
-```
+```java
 public class ProxyApplication extends Application {
     @Override
     public void onCreate() {
@@ -339,7 +339,7 @@ public class ProxyApplication extends Application {
 ```
 
 最后在Activity中,测试验证：
-```
+```java
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
