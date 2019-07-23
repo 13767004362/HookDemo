@@ -12,6 +12,7 @@
 - Android 插件化之ClassLoader加载so库
 - [Android 插件化之aapt修改资源前缀](https://github.com/13767004362/HookDemo/blob/master/aapt/Android%E6%8F%92%E4%BB%B6%E5%8C%96%E4%B9%8Baapt%E4%BF%AE%E6%94%B9%E8%B5%84%E6%BA%90%E5%89%8D%E7%BC%80.md)
 - [Android 插件化之加载插件资源](https://github.com/13767004362/HookDemo/blob/master/document/Android%E6%8F%92%E4%BB%B6%E5%8C%96%E4%B9%8B%E5%8A%A0%E8%BD%BDResource%E8%B5%84%E6%BA%90.md)
+- Android插件化之动态替换
 - Android 插件化之启动Activity
 - Android 插件化之加载Service
 - Android 插件化之加载BroadcastReceiver
