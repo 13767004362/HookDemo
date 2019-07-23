@@ -322,6 +322,7 @@ Java_com_xingen_plugin_NativeCodeTest_getContentFromJNI( JNIEnv* env,jobject){
 ```
 通过studio build生成对应的cpu的so库,如下图所示：
 
+![image](https://github.com/13767004362/HookDemo/blob/master/document/so%E5%BA%93.png)
 
 
 接下来，通过`System.loadLibrary()`加载so库
