@@ -17,7 +17,7 @@
 - Android 插件化之加载Service
 - Android 插件化之加载BroadcastReceiver
 - Android 插件化之加载ContentProvider
-- Android 插件化之Fragment重建问题
+- [Android 插件化之Fragment重建问题](https://github.com/13767004362/HookDemo/blob/master/document/Android%E6%8F%92%E4%BB%B6%E5%8C%96%E4%B9%8BFragment.md)
 
 **备注点**：以上插件化核心点的代码已经全部实现,详细介绍正在完善。
 
