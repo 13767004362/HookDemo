@@ -9,17 +9,18 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <meta-data
+            android:name="application"
+            android:value="com.xingen.plugin.DelegateApplication"></meta-data>
         <receiver android:name="com.xingen.plugin.receiver.PluginReceiver">
             <intent-filter>
                 <action android:name="com.xingen.plugin.receiver.PluginReceiver"></action>
             </intent-filter>
         </receiver>
-        <service android:name="com.xingen.plugin.service.PluginService">
-        </service>
-
+        <service android:name="com.xingen.plugin.service.PluginService"></service>
         <provider
-            android:authorities="com.xingen.plugin.contentprovider.PluginContentProvider"
-            android:name="com.xingen.plugin.contentprovider.PluginContentProvider">
+            android:name="com.xingen.plugin.contentprovider.PluginContentProvider"
+            android:authorities="com.xingen.plugin.contentprovider.PluginContentProvider">
 
         </provider>
     </application>

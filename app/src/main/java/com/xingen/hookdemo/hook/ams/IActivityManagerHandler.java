@@ -1,8 +1,9 @@
 package com.xingen.hookdemo.hook.ams;
 
+import android.content.Context;
 import android.content.Intent;
 
-import com.xingen.hookdemo.BaseApplication;
+import com.xingen.hookdemo.ProxyApplication;
 import com.xingen.hookdemo.hook.service.ServiceHookManager;
 
 import java.lang.reflect.InvocationHandler;
@@ -15,8 +16,10 @@ import java.lang.reflect.Method;
 
 public class IActivityManagerHandler implements InvocationHandler {
     private Object rawIActivityManager;
+    private Context context;
 
-    public IActivityManagerHandler(Object rawIActivityManager) {
+    public IActivityManagerHandler(Context context,Object rawIActivityManager) {
+        this.context=context;
         this.rawIActivityManager = rawIActivityManager;
 
     }
@@ -34,7 +37,7 @@ public class IActivityManagerHandler implements InvocationHandler {
             case "stopService":
                 // 判断是否停止插件中的服务。
                 Intent intent = AMSHookManager.Utils.filter(args);
-                if (!BaseApplication.getInstance().getPackageName().equals(intent.getComponent().getPackageName())) {
+                if (!context.getPackageName().equals(intent.getComponent().getPackageName())) {
                     return ServiceHookManager.stopService(intent);
                 } else {
                     return method.invoke(rawIActivityManager, args);

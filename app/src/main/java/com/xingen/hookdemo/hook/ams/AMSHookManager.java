@@ -1,6 +1,7 @@
 package com.xingen.hookdemo.hook.ams;
 
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Handler;
@@ -33,10 +34,10 @@ public class AMSHookManager {
      *
      * @param packageName
      */
-    public static void init(String packageName) {
+    public static void init(Context context,String packageName) {
         try {
             targetPackageName = packageName;
-            hookIActivityManager();
+            hookIActivityManager(context);
             hookActivityThreadHandler();
             isInIt=true;
         } catch (Exception e) {
@@ -47,7 +48,7 @@ public class AMSHookManager {
     /**
      * hook 掉IActivityManager，使用自己的代理对象和ams通讯
      */
-    private static void hookIActivityManager() throws Exception {
+    private static void hookIActivityManager(Context context) throws Exception {
         Field ActivityManagerSingletonFiled;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {//8.0以上发生改变
             Class<?> ActivityManagerClass = Class.forName("android.app.ActivityManager");
@@ -67,7 +68,7 @@ public class AMSHookManager {
         //动态代理，创建代理对象
         Object proxy = Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(),
                 new Class[]{Class.forName("android.app.IActivityManager")},
-                new IActivityManagerHandler(rawIActivityManager));
+                new IActivityManagerHandler(context,rawIActivityManager));
         //换成自己的IActivityManager对象
         mInstanceField.set(ActivityManagerSingleton, proxy);
     }

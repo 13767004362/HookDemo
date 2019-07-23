@@ -21,6 +21,7 @@ public class ProxyContentProvider  extends ContentProvider{
     public static final String AUTHORITY = "com.xingen.hookdemo.hook.contentprovider.ProxyContentProvider";
     @Override
     public boolean onCreate() {
+
         return false;
     }
 

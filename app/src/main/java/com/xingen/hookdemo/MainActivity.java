@@ -1,15 +1,14 @@
 package com.xingen.hookdemo;
 
 import android.app.Activity;
+import android.app.Application;
 import android.content.ComponentName;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.database.Cursor;
 import android.net.Uri;
-import android.net.wifi.aware.PublishConfig;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
@@ -20,12 +19,8 @@ import android.widget.Toast;
 import com.xingen.hookdemo.hook.ams.AMSHookManager;
 import com.xingen.hookdemo.hook.receiver.ReceiverHookManager;
 import com.xingen.hookdemo.hook.resource.ResourceHookManager;
-import com.xingen.hookdemo.hook.service.ServiceHookManager;
 
 import java.lang.reflect.Method;
-import java.util.Random;
-
-import dalvik.system.BaseDexClassLoader;
 
 public class MainActivity extends Activity implements View.OnClickListener {
 
@@ -36,15 +31,12 @@ public class MainActivity extends Activity implements View.OnClickListener {
     protected void attachBaseContext(Context newBase) {
         super.attachBaseContext(newBase);
         appMainClassLoader = this.getClassLoader();
-        String apkFilePath = BaseApplication.getInstance().getZipFilePath();
+        String apkFilePath = PluginConfig.getZipFilePath(this);
         // hook  ams
         String subPackageName = getPackageName();
-        AMSHookManager.init(subPackageName);
+        AMSHookManager.init(newBase,subPackageName);
         // hook 广播
         ReceiverHookManager.init(this, apkFilePath);
-
-
-
     }
 
     @Override
@@ -58,11 +50,16 @@ public class MainActivity extends Activity implements View.OnClickListener {
         findViewById(R.id.main_hook_content_provider).setOnClickListener(this);
         findViewById(R.id.main_hook_resource).setOnClickListener(this);
         findViewById(R.id.main_hook_native).setOnClickListener(this);
+        findViewById(R.id.main_hook_application_btn).setOnClickListener(this);
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
+            case R.id.main_hook_application_btn:
+                Application application=getApplication();
+                Toast.makeText(getApplicationContext()," Application的类名是： "+application.getClass().getSimpleName(),Toast.LENGTH_LONG).show();
+            break;
             case R.id.main_hook_fragment_btn:
                 loadPlugin();
                 break;

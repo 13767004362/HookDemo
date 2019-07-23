@@ -1,5 +1,6 @@
 package com.xingen.hookdemo.hook.contentprovider;
 
+import android.app.Application;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.pm.PackageManager;
@@ -18,12 +19,12 @@ import java.util.List;
  */
 public class ContentProviderHookManager {
     private static List<ProviderInfo> providerInfoList=new LinkedList<>();
-
-    public static void init(Context context,String apkFilePath){
+    public static void init(Application  context, String apkFilePath){
          preloadParseContentProvider(apkFilePath);
          // 便于classloader加载，修改
+        String packageName=context.getBaseContext().getPackageName();
         for (ProviderInfo providerInfo:providerInfoList){
-            providerInfo.applicationInfo.packageName=context.getPackageName();
+             providerInfo.applicationInfo.packageName=packageName;
         }
         installContentProvider(context);
     }

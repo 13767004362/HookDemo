@@ -5,14 +5,20 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.xingen.hookdemo.MainActivity">
-
+    <Button
+        android:id="@+id/main_hook_application_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="动态替换插件中的Application"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
     <Button
         android:id="@+id/main_hook_fragment_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="调用插件中的DialogFragment"
+        android:text="调用插件中的Fragment"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/main_hook_application_btn" />
 
 
     <Button
