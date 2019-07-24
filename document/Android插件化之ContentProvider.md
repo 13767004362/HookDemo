@@ -53,7 +53,9 @@ installContentProviders():
         }
     }
 ```
-通过contextImpl和解析apk得到的ProviderInfo列表,进行安装。这个是一个hook点，只要接下出插件中的ContentProvider就可以进行安装。
+通过contextImpl和解析apk得到的ProviderInfo列表,进行安装。
+
+hook点：只要解析出插件中的ContentProvider信息，再调用`installContentProviders()`就可以进行安装插件中的ConentProvider。
 
 
 继续看安装过程，installProvider():
@@ -332,7 +334,7 @@ private ContextImpl(ContextImpl container, ActivityThread mainThread,
 **思考**：
 
 1. 解析出插件中contentprovider
-2. 在ApplicationattachBaseContext()中安装插件的contentprovidr。
+2. 在Application#attachBaseContext()中安装插件的contentprovidr。
 3. 存在的一个问题，其他应用程序无法访问插件中ContentProvider。因PackageManagerService是无法获取到插件中信息。
 
 在插件中编写一个contentprovoider
@@ -515,7 +517,7 @@ public class ProxyApplication extends Application {
 }
 ```
 最后，测试：
-```
+```java
     private void useContentProvider(View view) {
         final Uri uri = Uri.parse("content://" + PluginConfig.provider_name);
         final String column_name = "name";
