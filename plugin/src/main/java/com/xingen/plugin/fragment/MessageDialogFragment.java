@@ -28,6 +28,7 @@ public class MessageDialogFragment extends DialogFragment {
 
     }
 
+
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
