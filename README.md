@@ -14,7 +14,7 @@
 - [Android 插件化之加载插件资源](https://github.com/13767004362/HookDemo/blob/master/document/Android%E6%8F%92%E4%BB%B6%E5%8C%96%E4%B9%8B%E5%8A%A0%E8%BD%BDResource%E8%B5%84%E6%BA%90.md)
 - [Android插件化之动态替换Application](https://github.com/13767004362/HookDemo/blob/master/document/%E6%8F%92%E4%BB%B6%E5%8C%96%E4%B9%8B%E5%8A%A8%E6%80%81%E6%9B%BF%E6%8D%A2application.md)
 - Android 插件化之启动Activity
-- Android 插件化之加载Service
+- [Android 插件化之加载Service](https://github.com/13767004362/HookDemo/blob/master/document/Android%E6%8F%92%E4%BB%B6%E5%8C%96%E4%B9%8BService.md)
 - [Android 插件化之加载BroadcastReceiver](https://github.com/13767004362/HookDemo/blob/master/document/android%E6%8F%92%E4%BB%B6%E5%8C%96%E4%B9%8BBrocastReceiver.md)
 - [Android 插件化之加载ContentProvider](https://github.com/13767004362/HookDemo/blob/master/document/Android%E6%8F%92%E4%BB%B6%E5%8C%96%E4%B9%8BContentProvider.md)
 - [Android 插件化之Fragment重建问题](https://github.com/13767004362/HookDemo/blob/master/document/Android%E6%8F%92%E4%BB%B6%E5%8C%96%E4%B9%8BFragment.md)
