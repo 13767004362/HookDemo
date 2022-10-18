@@ -3,12 +3,13 @@
 buildscript {
     
     repositories {
-        google()
-        jcenter()
+        maven { url "https://maven.aliyun.com/repository/public/" }
+        maven { url "https://maven.aliyun.com/repository/google/" }
+        maven { url "https://maven.aliyun.com/repository/central/" }
     }
     dependencies {
         // 更新到3.1.0之上的版本,解决：No toolchains found in the NDK toolchains folder for ABI with prefix: mips64el-linux-android
-        classpath 'com.android.tools.build:gradle:3.2.0'
+        classpath 'com.android.tools.build:gradle:3.6.3'
         
 
         // NOTE: Do not place your application dependencies here; they belong
@@ -18,8 +19,9 @@ buildscript {
 
 allprojects {
     repositories {
-        google()
-        jcenter()
+        maven { url "https://maven.aliyun.com/repository/public/" }
+        maven { url "https://maven.aliyun.com/repository/google/" }
+        maven { url "https://maven.aliyun.com/repository/central/" }
     }
 }
 

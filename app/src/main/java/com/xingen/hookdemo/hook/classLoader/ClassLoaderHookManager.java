@@ -124,10 +124,19 @@ public class ClassLoaderHookManager {
                 systemNativeLibraryDirectoriesField.setAccessible(true);
                 List<File> systemNativeLibraryDirectories = (List<File>) systemNativeLibraryDirectoriesField.get(dexPathList);
                 allNativeLibDirList.addAll(systemNativeLibraryDirectories);
-                //通过makePathElements获取到c++存放的Element
-                Method makePathElementsMethod = DexPathListClass.getDeclaredMethod("makePathElements", List.class, List.class, ClassLoader.class);
-                makePathElementsMethod.setAccessible(true);
-                Object[] allNativeLibraryPathElements = (Object[]) makePathElementsMethod.invoke(null, allNativeLibDirList, new ArrayList<IOException>(), appClassLoader);
+
+                Object[] allNativeLibraryPathElements=null;
+                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O){
+                    //通过makePathElements获取到c++存放的Element
+                    Method makePathElementsMethod = DexPathListClass.getDeclaredMethod("makePathElements", List.class, List.class, ClassLoader.class);
+                    makePathElementsMethod.setAccessible(true);
+                    allNativeLibraryPathElements = (Object[]) makePathElementsMethod.invoke(null, allNativeLibDirList, new ArrayList<IOException>(), appClassLoader);
+                }else{
+                    //android 8.0 以上有所改变, nativeLibraryPathElements = makePathElements(this.systemNativeLibraryDirectories);
+                    Method makePathElementsMethod = DexPathListClass.getDeclaredMethod("makePathElements", List.class);
+                    makePathElementsMethod.setAccessible(true);
+                    allNativeLibraryPathElements = (Object[]) makePathElementsMethod.invoke(null, allNativeLibDirList);
+                }
                 //将合并宿主和插件的so库，重新设置进去
                 Field nativeLibraryPathElementsField = DexPathListClass.getDeclaredField("nativeLibraryPathElements");
                 nativeLibraryPathElementsField.setAccessible(true);
