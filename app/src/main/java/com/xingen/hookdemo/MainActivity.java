@@ -11,6 +11,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -20,12 +21,14 @@ import com.xingen.hookdemo.hook.ams.AMSHookManager;
 import com.xingen.hookdemo.hook.receiver.ReceiverHookManager;
 import com.xingen.hookdemo.hook.resource.ResourceHookManager;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
 public class MainActivity extends Activity implements View.OnClickListener {
 
 
     private ClassLoader appMainClassLoader;
+
 
     @Override
     protected void attachBaseContext(Context newBase) {
@@ -162,6 +165,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
      * 绕过ams，启动目标的Activity
      */
     private void loadTargetActivity() {
+
         ComponentName componentName = new ComponentName(PluginConfig.package_name, PluginConfig.activity_name);
         startActivity(new Intent().setComponent(componentName));
     }

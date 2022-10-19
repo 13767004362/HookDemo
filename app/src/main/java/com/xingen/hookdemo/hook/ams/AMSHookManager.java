@@ -1,11 +1,14 @@
 package com.xingen.hookdemo.hook.ams;
 
+import android.app.Instrumentation;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.nfc.Tag;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 
 import com.xingen.hookdemo.hook.activity.StubActivity;
 import com.xingen.hookdemo.hook.service.ProxyService;
@@ -24,6 +27,7 @@ public class AMSHookManager {
     private static String targetPackageName;
     public static final String KEY_RAW_INTENT = "raw_intent";
     private  static  boolean isInIt=false;
+    public static final String TAG="AMSHookManager";
 
     public static boolean isIsInIt() {
         return isInIt;
@@ -73,7 +77,29 @@ public class AMSHookManager {
         mInstanceField.set(ActivityManagerSingleton, proxy);
     }
 
-
+    /**
+     * android 9.0 以上采用Instrumentation方式来，加载插件中Activity
+     * @param context
+     * @throws Exception
+     */
+    public static void hookInstrumentation(Context context){
+        if (Build.VERSION.SDK_INT>Build.VERSION_CODES.O_MR1){
+            try {
+                //获取到ActivityThread
+                Class<?> ActivityThreadClass = Class.forName("android.app.ActivityThread");
+                Field sCurrentActivityThreadField = ActivityThreadClass.getDeclaredField("sCurrentActivityThread");
+                sCurrentActivityThreadField.setAccessible(true);
+                Object ActivityThread = sCurrentActivityThreadField.get(null);
+                Field mInstrumentationField=ActivityThreadClass.getDeclaredField("mInstrumentation");
+                mInstrumentationField.setAccessible(true);
+                Instrumentation instrumentation= (Instrumentation) mInstrumentationField.get(ActivityThread);
+                Instrumentation proxyInstrumentation=new Android9Instrumentation(instrumentation,context.getPackageManager());
+                mInstrumentationField.set(ActivityThread,proxyInstrumentation);
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+        }
+    }
     /**
      * hook ActivityThread中 handler拦截处理
      * ,恢复要开启的activity
@@ -128,13 +154,16 @@ public class AMSHookManager {
             }
             //真实启动的Intent
             rawIntent = (Intent) args[index];
+            args[index] = createProxyIntent(rawIntent);
+        }
+        public static Intent createProxyIntent(Intent rawIntent){
             //构建一个替代的Activity对应的intent
             Intent subIntent = new Intent();
             ComponentName componentName = new ComponentName(targetPackageName, StubActivity.class.getName());
             subIntent.setComponent(componentName);
             //将真实启动的Intent作为参数附带上
             subIntent.putExtra(KEY_RAW_INTENT,rawIntent);
-            args[index] = subIntent;
+            return subIntent;
         }
 
 
@@ -181,6 +210,11 @@ public class AMSHookManager {
                     e.printStackTrace();
                 }
             }
+        }
+        public static Intent recoverActivityIntent(Intent  subIntent){
+            //真实启动的Intent
+            Intent  rawIntent= subIntent.getParcelableExtra(KEY_RAW_INTENT);
+            return rawIntent;
         }
     }
 

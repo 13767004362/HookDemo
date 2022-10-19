@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.text.TextUtils;
 
+import com.xingen.hookdemo.hook.ams.AMSHookManager;
 import com.xingen.hookdemo.hook.application.ApplicationHook;
 import com.xingen.hookdemo.hook.classLoader.ClassLoaderHookManager;
 import com.xingen.hookdemo.hook.contentprovider.ContentProviderHookManager;
@@ -52,5 +53,6 @@ public class ProxyApplication extends Application {
         ServiceHookManager.init(context, zipFilePath);
         // hook ContentProvider(加载ContentProvider是在application 的onCreate()之前)
          ContentProviderHookManager.init(this, zipFilePath);
+        AMSHookManager.hookInstrumentation(context);
     }
 }
