@@ -36,6 +36,9 @@ android官方在9.0以上版本，限制反射调用hide隐藏api，给插件化
 不过，国内大牛厉害，针对该问题已经有过墙梯。详细方案，请阅读[另一种绕过 Android P以上非公开API限制的办法](http://weishu.me/2019/03/16/another-free-reflection-above-android-p/), 使用[FreeReflection ](https://github.com/tiann/FreeReflection)库便可解决。
 
 
+目前在android 12 以上机型,存在反射问题。请在android 11以下运行本案例,若有其他crash 问题,欢迎提交Issues。
+
+
 ----------
 
 **资源参考**：
