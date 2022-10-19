@@ -9,6 +9,7 @@ import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ServiceInfo;
 import android.os.Binder;
+import android.os.Build;
 import android.os.IBinder;
 import android.util.Log;
 
@@ -46,10 +47,18 @@ public class ServiceHookManager {
             // 先获取PackageParser对象
             Class<?> packageParserClass = Class.forName("android.content.pm.PackageParser");
             Object packageParser = packageParserClass.newInstance();
-            //接着获取PackageParser.Package
-            Method parsePackageMethod = packageParserClass.getDeclaredMethod("parsePackage", File.class, int.class);
-            parsePackageMethod.setAccessible(true);
-            Object packageParser$package = parsePackageMethod.invoke(packageParser, new File(apkFilePath), PackageManager.GET_RECEIVERS);
+            Object packageParser$package=null;
+            if (  Build.VERSION.SDK_INT < Build.VERSION_CODES.O){
+                //接着获取PackageParser.Package
+                Method parsePackageMethod = packageParserClass.getDeclaredMethod("parsePackage", File.class, int.class);
+                parsePackageMethod.setAccessible(true);
+                packageParser$package = parsePackageMethod.invoke(packageParser, new File(apkFilePath), PackageManager.GET_RECEIVERS);
+            }else{
+                Method parsePackageMethod = packageParserClass.getDeclaredMethod("parsePackage", File.class, int.class,boolean.class);
+                parsePackageMethod.setAccessible(true);
+                packageParser$package = parsePackageMethod.invoke(packageParser, new File(apkFilePath), PackageManager.GET_RECEIVERS,false);
+            }
+
             // 接着获取到Package中的receivers列表
             Class<?> packageParser$package_Class = packageParser$package.getClass();
             Field servicesField = packageParser$package_Class.getDeclaredField("services");

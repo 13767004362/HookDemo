@@ -49,11 +49,14 @@ public class ResourceHookManager {
             Field loadedApkField = contextImplClass.getDeclaredField("mPackageInfo");
             loadedApkField.setAccessible(true);
             Object loadApk = loadedApkField.get(context);
+
+
             Class<?> loadApkClass = loadApk.getClass();
             // 替换掉LoadApk中的Resource对象。
             Field resourcesField2 = loadApkClass.getDeclaredField("mResources");
             resourcesField2.setAccessible(true);
             resourcesField2.set(loadApk, resources);
+
 
             //获取到ActivityThread
             Class<?> ActivityThreadClass = Class.forName("android.app.ActivityThread");
@@ -83,6 +86,19 @@ public class ResourceHookManager {
                 mResourcesImplField.setAccessible(true);
                 Object resourcesImpl = mResourcesImplField.get(resources);
                 map.put(key, new WeakReference<>(resourcesImpl));
+                if (Build.VERSION.SDK_INT > Build.VERSION_CODES.O_MR1){
+                    //在android 9.0 以上 创建Activity会单独创建Resource,并没有使用LoadApk中Resource.
+                    // 因此考虑将插件资源放到LoadApk中mSplitResDirs数组中
+                    try {
+                        Field mSplitResDirsField=loadApkClass.getDeclaredField("mSplitResDirs");
+                        mSplitResDirsField.setAccessible(true);
+                        String[] mSplitResDirs= (String[]) mSplitResDirsField.get(loadApk);
+                        String[] temp=new String[]{apkFilePath};
+                         mSplitResDirsField.set(loadApk,temp);
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
+                }
             }
             multiResources = resources;
         } catch (Exception e) {
