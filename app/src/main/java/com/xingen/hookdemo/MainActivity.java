@@ -10,18 +10,19 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Looper;
 import android.text.TextUtils;
-import android.util.Log;
+import android.util.Printer;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.xingen.hookdemo.hook.ams.AMSHookManager;
+import com.xingen.hookdemo.hook.pms.PMSHookManger;
 import com.xingen.hookdemo.hook.receiver.ReceiverHookManager;
 import com.xingen.hookdemo.hook.resource.ResourceHookManager;
 
-import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
 public class MainActivity extends Activity implements View.OnClickListener {
@@ -40,6 +41,12 @@ public class MainActivity extends Activity implements View.OnClickListener {
         AMSHookManager.init(newBase,subPackageName);
         // hook 广播
         ReceiverHookManager.init(this, apkFilePath);
+        Looper.getMainLooper().setMessageLogging(new Printer() {
+            @Override
+            public void println(String x) {
+
+            }
+        });
     }
 
     @Override
@@ -54,6 +61,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
         findViewById(R.id.main_hook_resource).setOnClickListener(this);
         findViewById(R.id.main_hook_native).setOnClickListener(this);
         findViewById(R.id.main_hook_application_btn).setOnClickListener(this);
+        findViewById(R.id.main_hook_pms_sign).setOnClickListener(this);
     }
 
     @Override
@@ -88,6 +96,13 @@ public class MainActivity extends Activity implements View.OnClickListener {
             case R.id.main_hook_native:{
                 useNativeLibrary();
             }
+                break;
+
+            case R.id.main_hook_pms_sign:
+            {
+                PMSHookManger.printAppSignature(this);
+            }
+            default:
                 break;
 
         }
