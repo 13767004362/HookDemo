@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.Signature;
+import android.os.Build;
 import android.util.Log;
 
 import com.xingen.hookdemo.hook.ams.AMSHookManager;
@@ -78,7 +79,8 @@ public class PMSHookManger {
             switch (method.getName()) {
                 case "getPackageInfo":
                     String pkgName = (String)args[0];
-                    Integer flag = (Integer)args[1];
+                    //android 13 开始,getPackageInfo(String packageName, long flags, int userId) 第二个参数是long类型
+                    long flag = Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU ? (long) args[1] : (int) args[1];
                     //是否是获取我们需要hook apk的签名
                     if(flag == PackageManager.GET_SIGNATURES && appPkgName.equals(pkgName)){
                         //将构造方法中传进来的新的签名覆盖掉原来的签名
