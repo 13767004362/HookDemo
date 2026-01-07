@@ -1,11 +1,9 @@
 package com.xingen.hookdemo.hook.contentprovider;
 
 import android.app.Application;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.content.pm.ProviderInfo;
-import android.content.pm.ServiceInfo;
 
 import java.io.File;
 import java.lang.reflect.Field;

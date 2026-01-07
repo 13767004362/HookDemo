@@ -1,6 +1,7 @@
 package com.xingen.hookdemo.hook.activity;
 
-import android.support.v7.app.AppCompatActivity;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 /**
  * Created by ${HeXinGen} on 2019/1/6.

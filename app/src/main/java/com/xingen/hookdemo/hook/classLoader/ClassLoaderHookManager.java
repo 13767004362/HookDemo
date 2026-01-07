@@ -1,14 +1,9 @@
 package com.xingen.hookdemo.hook.classLoader;
 
 import android.content.Context;
-import android.content.pm.ProviderInfo;
 import android.os.Build;
-import android.sax.Element;
-import android.system.ErrnoException;
-import android.system.StructStat;
 import android.text.TextUtils;
 import android.util.Log;
-import android.widget.EditText;
 
 import com.xingen.hookdemo.utils.Utils;
 
@@ -19,11 +14,9 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-import dalvik.system.BaseDexClassLoader;
 import dalvik.system.DexClassLoader;
 import dalvik.system.DexFile;
 

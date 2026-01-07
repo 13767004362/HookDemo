@@ -3,7 +3,6 @@ package com.xingen.hookdemo.hook.ams;
 import android.content.Context;
 import android.content.Intent;
 
-import com.xingen.hookdemo.ProxyApplication;
 import com.xingen.hookdemo.hook.service.ServiceHookManager;
 
 import java.lang.reflect.InvocationHandler;

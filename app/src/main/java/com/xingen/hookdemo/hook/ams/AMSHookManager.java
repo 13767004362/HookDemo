@@ -4,11 +4,9 @@ import android.app.Instrumentation;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.nfc.Tag;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 
 import com.xingen.hookdemo.hook.activity.StubActivity;
 import com.xingen.hookdemo.hook.service.ProxyService;

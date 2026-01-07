@@ -1,0 +1,23 @@
+ext {
+
+    android = [
+            compileSdkVersion: 35,
+            minSdkVersion    : 21,
+            targetSdkVersion : 35,
+    ]
+
+    ndk=[
+            "ndkVersion" : "27.3.13750724"
+    ]
+
+
+    dependencies = [
+            //android 官方
+            "appcompat" : 'androidx.appcompat:appcompat:1.7.1',
+            "constraintlayout": 'androidx.constraintlayout:constraintlayout:2.1.4',
+
+
+            "FreeReflection":'com.github.tiann:FreeReflection:3.1.0',
+
+    ]
+}

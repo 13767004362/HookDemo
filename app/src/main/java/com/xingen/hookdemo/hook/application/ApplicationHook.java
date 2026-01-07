@@ -1,6 +1,5 @@
 package com.xingen.hookdemo.hook.application;
 
-import android.app.Activity;
 import android.app.Application;
 import android.content.ContentProvider;
 import android.content.Context;

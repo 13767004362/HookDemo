@@ -3,16 +3,11 @@ package com.xingen.hookdemo.hook.resource;
 import android.content.Context;
 import android.content.res.AssetManager;
 import android.content.res.Resources;
-import android.graphics.drawable.Drawable;
 import android.os.Build;
-import android.util.Log;
-import android.widget.EditText;
 
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 /**

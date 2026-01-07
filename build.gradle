@@ -1,28 +1,33 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
-
+apply from: "config.gradle"
 buildscript {
-    
+    ext.kotlin_version = '1.9.20'
     repositories {
-        maven { url "https://maven.aliyun.com/repository/public/" }
-        maven { url "https://maven.aliyun.com/repository/google/" }
-        maven { url "https://maven.aliyun.com/repository/central/" }
+        maven { url 'https://maven.aliyun.com/repository/central' }
+        maven { url 'https://maven.aliyun.com/repository/jcenter' }
+        maven { url 'https://maven.aliyun.com/repository/google' }
+        maven { url 'https://maven.aliyun.com/repository/gradle-plugin' }
+        maven { url 'https://maven.aliyun.com/repository/public' }
+        maven { url 'https://jitpack.io' }
+        google()
+        mavenCentral()
     }
     dependencies {
-        // 更新到3.1.0之上的版本,解决：No toolchains found in the NDK toolchains folder for ABI with prefix: mips64el-linux-android
-        classpath 'com.android.tools.build:gradle:3.6.3'
-        
-
-        // NOTE: Do not place your application dependencies here; they belong
-        // in the individual module build.gradle files
+        classpath 'com.android.tools.build:gradle:8.13.0'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
 
 allprojects {
     repositories {
-        maven { url "https://maven.aliyun.com/repository/public/" }
-        maven { url "https://maven.aliyun.com/repository/google/" }
-        maven { url "https://maven.aliyun.com/repository/central/" }
+        maven { url 'https://maven.aliyun.com/repository/central' }
+        maven { url 'https://maven.aliyun.com/repository/jcenter' }
+        maven { url 'https://maven.aliyun.com/repository/google' }
+        maven { url 'https://maven.aliyun.com/repository/gradle-plugin' }
+        maven { url 'https://maven.aliyun.com/repository/public' }
         maven { url 'https://jitpack.io' }
+        google()
+        mavenCentral()
     }
 }
 
