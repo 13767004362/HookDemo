@@ -138,8 +138,8 @@ public class ServiceHookManager {
             // 赋值 ServiceInfo
             Field infoField = createServiceDataClass.getDeclaredField("info");
             infoField.setAccessible(true);
-            // 这里修改，是为了loadClass的时候, LoadedApk会是主程序的ClassLoader
-            serviceInfo.applicationInfo.packageName=appContext.getPackageName();
+            //这里使用宿主的ApplicationInfo
+            serviceInfo.applicationInfo = appContext.getApplicationInfo();
             infoField.set(createServiceData, serviceInfo);
             // 赋值CompatibilityInfo对象
             Field compatInfoField = createServiceDataClass.getDeclaredField("compatInfo");
