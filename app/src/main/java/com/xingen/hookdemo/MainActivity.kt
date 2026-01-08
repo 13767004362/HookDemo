@@ -168,7 +168,7 @@ class MainActivity : AppCompatActivity() {
             //通过dexClassLoader加载指定包名的类
             val mClass =
                 appMainClassLoader!!.loadClass("com.xingen.plugin.fragment.MessageDialogFragment")
-            val method = mClass.getDeclaredMethod("startDialog", Activity::class.java)
+            val method = mClass.getDeclaredMethod("startDialog", AppCompatActivity::class.java)
             method.isAccessible = true
             method.invoke(null, this)
         } catch (e: Exception) {

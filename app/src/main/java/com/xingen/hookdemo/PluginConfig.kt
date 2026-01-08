@@ -20,7 +20,7 @@ object PluginConfig {
     const val native_class_name: String = "com.xingen.plugin.NativeCodeTest"
     const val meta_application_key: String = "application"
 
-    fun getZipFilePath(context: Context?): String {
+    fun getZipFilePath(context: Context): String {
         return File(
             Utils.getCacheDir(context).absolutePath + File.separator + apk_file_name
         ).absolutePath

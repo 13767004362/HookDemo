@@ -1,9 +1,9 @@
 ext {
 
     android = [
-            compileSdkVersion: 35,
+            compileSdkVersion: 36,
             minSdkVersion    : 21,
-            targetSdkVersion : 35,
+            targetSdkVersion : 36,
     ]
 
     ndk=[

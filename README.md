@@ -27,8 +27,8 @@
 ----------
 
 **绕开 Android P以上非公开API限制**
-- [AndroidHiddenApiBypass](https://github.com/LSPosed/AndroidHiddenApiBypass): 当前android 9以上可用。
-- [FreeReflection ](https://github.com/tiann/FreeReflection):android 14及其以下可用
+- [AndroidHiddenApiBypass](https://github.com/LSPosed/AndroidHiddenApiBypass): 当前android9以上全部版本可用。
+- [FreeReflection ](https://github.com/tiann/FreeReflection):android 14及其以下可用。
 ----------
 
 **资源参考**：
