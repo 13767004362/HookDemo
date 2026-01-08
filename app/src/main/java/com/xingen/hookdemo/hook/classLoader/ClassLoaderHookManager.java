@@ -29,6 +29,12 @@ public class ClassLoaderHookManager {
 
     public static void init(Context context, String zipFilePath, String optimizedDirectory) {
         try {
+            //android 14 开始，动态加载代码dex,必须是只读
+            if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.UPSIDE_DOWN_CAKE){
+                File zipFile = new File(zipFilePath);
+                zipFile.setReadOnly();
+            }
+
             // 先解压dex文件
             DexFile dexFile = DexParse.parseDex(zipFilePath, optimizedDirectory);
             // 将插件dex加载到主进程的classloader, dex文件可以放sdcard或者手机内部磁盘中，但so库只能放在手机内部磁盘中data/data下
