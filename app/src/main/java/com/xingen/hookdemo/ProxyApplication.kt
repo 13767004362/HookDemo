@@ -2,6 +2,7 @@ package com.xingen.hookdemo
 
 import android.app.Application
 import android.content.Context
+import android.os.Build
 import com.xingen.hookdemo.hook.ams.AMSHookManager
 import com.xingen.hookdemo.hook.application.ApplicationHook
 import com.xingen.hookdemo.hook.classLoader.ClassLoaderHookManager
@@ -10,7 +11,7 @@ import com.xingen.hookdemo.hook.pms.PMSHookManger
 import com.xingen.hookdemo.hook.resource.ResourceHookManager
 import com.xingen.hookdemo.hook.service.ServiceHookManager
 import com.xingen.hookdemo.utils.Utils
-import me.weishu.reflection.Reflection
+import org.lsposed.hiddenapibypass.HiddenApiBypass
 import java.io.File
 
 /**
@@ -20,7 +21,8 @@ import java.io.File
 class ProxyApplication : Application() {
     override fun attachBaseContext(base: Context) {
         super.attachBaseContext(base)
-        Reflection.unseal(base)
+        handleAndroidPReflection()
+        //Reflection.unseal(base)
         loadPluginDex(base)
     }
 
@@ -30,6 +32,14 @@ class ProxyApplication : Application() {
         HookSystemBar().hookSystemBar(this)
         //解析插件中的Application,动态替换
         ApplicationHook.init(PluginConfig.getZipFilePath(this), this)
+    }
+
+    // 使用HiddenApiBypass 处理android 9及其以上版本的反射问题
+    private fun handleAndroidPReflection() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            // 豁免全部的类，允许反射访问
+            HiddenApiBypass.addHiddenApiExemptions("")
+        }
     }
 
 

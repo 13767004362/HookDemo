@@ -18,6 +18,7 @@ ext {
 
 
             "FreeReflection":'com.github.tiann:FreeReflection:3.2.2',
+            "hiddenapibypass":"org.lsposed.hiddenapibypass:hiddenapibypass:+",
 
     ]
 }

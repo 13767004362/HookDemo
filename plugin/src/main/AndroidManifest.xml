@@ -11,13 +11,13 @@
         android:theme="@style/AppTheme">
         <meta-data
             android:name="application"
-            android:value="com.xingen.plugin.DelegateApplication"></meta-data>
-        <receiver android:name="com.xingen.plugin.receiver.PluginReceiver">
+            android:value="com.xingen.plugin.DelegateApplication"/>
+        <receiver android:name="com.xingen.plugin.receiver.PluginReceiver" android:exported="true">
             <intent-filter>
-                <action android:name="com.xingen.plugin.receiver.PluginReceiver"></action>
+                <action android:name="com.xingen.plugin.receiver.PluginReceiver"/>
             </intent-filter>
         </receiver>
-        <service android:name="com.xingen.plugin.service.PluginService"></service>
+        <service android:name="com.xingen.plugin.service.PluginService"/>
         <provider
             android:name="com.xingen.plugin.contentprovider.PluginContentProvider"
             android:authorities="com.xingen.plugin.contentprovider.PluginContentProvider">

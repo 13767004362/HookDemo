@@ -31,11 +31,18 @@ android {
     buildFeatures {
         viewBinding = true
     }
+
+    // hiddenapibypass库：关闭依赖信息
+    dependenciesInfo {
+        includeInApk = false
+        includeInBundle = false
+    }
 }
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation rootProject.ext.dependencies["appcompat"]
     implementation rootProject.ext.dependencies["constraintlayout"]
-    implementation rootProject.ext.dependencies["FreeReflection"]
+    //implementation rootProject.ext.dependencies["FreeReflection"]
+    implementation rootProject.ext.dependencies["hiddenapibypass"]
 }

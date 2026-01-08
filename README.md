@@ -21,24 +21,14 @@
 
 **备注点**：以上插件化核心点的代码已经全部实现,详细介绍正在完善。
 
-**项目特别说明**：
 
-1. 需要先阅读[Android 插件化之aapt修改资源前缀](https://github.com/13767004362/HookDemo/blob/master/aapt/Android%E6%8F%92%E4%BB%B6%E5%8C%96%E4%B9%8Baapt%E4%BF%AE%E6%94%B9%E8%B5%84%E6%BA%90%E5%89%8D%E7%BC%80.md)，接着，配置好aapt。
-2. 在导入项目，进行调试。
 
 
 ----------
 
-**Android P以上非公开API限制问题**
-
-android官方在9.0以上版本，限制反射调用hide隐藏api，给插件化带来一片阴影。
-
-不过，国内大牛厉害，针对该问题已经有过墙梯。详细方案，请阅读[另一种绕过 Android P以上非公开API限制的办法](http://weishu.me/2019/03/16/another-free-reflection-above-android-p/), 使用[FreeReflection ](https://github.com/tiann/FreeReflection)库便可解决。
-
-
-目前在android 12 以上机型,存在反射问题。请在android 11以下运行本案例,若有其他crash 问题,欢迎提交Issues。
-
-
+**绕开 Android P以上非公开API限制**
+- [AndroidHiddenApiBypass](https://github.com/LSPosed/AndroidHiddenApiBypass): 当前android 9以上可用。
+- [FreeReflection ](https://github.com/tiann/FreeReflection):android 14及其以下可用
 ----------
 
 **资源参考**：
