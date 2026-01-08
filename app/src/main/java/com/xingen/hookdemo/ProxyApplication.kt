@@ -2,7 +2,6 @@ package com.xingen.hookdemo
 
 import android.app.Application
 import android.content.Context
-import android.os.Build
 import com.xingen.hookdemo.hook.ams.AMSHookManager
 import com.xingen.hookdemo.hook.application.ApplicationHook
 import com.xingen.hookdemo.hook.classLoader.ClassLoaderHookManager
@@ -19,6 +18,10 @@ import java.io.File
  * date 2019/5/31.
  */
 class ProxyApplication : Application() {
+    companion object {
+        lateinit var realApplication: Application
+    }
+
     override fun attachBaseContext(base: Context) {
         super.attachBaseContext(base)
         handleAndroidPReflection()
@@ -28,15 +31,15 @@ class ProxyApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        // 适配android 15 全面模式EdgeToEdge
-        HookSystemBar().hookSystemBar(this)
         //解析插件中的Application,动态替换
-        ApplicationHook.init(PluginConfig.getZipFilePath(this), this)
+        realApplication = ApplicationHook.init(PluginConfig.getZipFilePath(this), this)
+        // 适配android 15 全面模式EdgeToEdge
+        HookSystemBar().hookSystemBar(realApplication)
     }
 
     // 使用HiddenApiBypass 处理android 9及其以上版本的反射问题
     private fun handleAndroidPReflection() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+        if (isAndroid9Above()) {
             // 豁免全部的类，允许反射访问
             HiddenApiBypass.addHiddenApiExemptions("")
         }
@@ -46,9 +49,14 @@ class ProxyApplication : Application() {
     private fun loadPluginDex(context: Context) {
         // 先拷贝assets 下的apk，写入磁盘中。
         val zipFilePath = PluginConfig.getZipFilePath(context)
-        val zipFile = File(zipFilePath)
+        //先删除旧的只可读的文件
+        File(zipFilePath).let {
+            if (it.exists() && !it.canWrite()) {
+                it.delete()
+            }
+        }
         val assetFileName = "plugin.apk"
-        Utils.copyFiles(context, assetFileName, zipFile)
+        Utils.copyFiles(context, assetFileName, zipFilePath)
         val optimizedDirectory = File(
             Utils.getCacheDir(context).absolutePath + File.separator + "plugin"
         ).absolutePath

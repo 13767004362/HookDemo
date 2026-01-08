@@ -30,7 +30,7 @@ public class Utils {
             if (desFile.exists()) {
                 desFile.delete();
             }
-            copyFiles(context, fileName, desFile);
+            copyFiles(context, fileName, filePath);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -61,12 +61,13 @@ public class Utils {
 
         }
     }
-    public static void copyFiles(Context context, String fileName, File desFile) {
+    public static void copyFiles(Context context, String fileName, String desFilePath) {
+
         InputStream in = null;
         OutputStream out = null;
         try {
             in = context.getAssets().open(fileName);
-            out = new FileOutputStream(desFile.getAbsolutePath());
+            out = new FileOutputStream(desFilePath);
             byte[] bytes = new byte[1024];
             int i;
             while ((i = in.read(bytes)) != -1)

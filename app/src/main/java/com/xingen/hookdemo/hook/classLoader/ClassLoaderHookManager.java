@@ -5,6 +5,7 @@ import android.os.Build;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.xingen.hookdemo.AndroidVersionExtKt;
 import com.xingen.hookdemo.utils.Utils;
 
 import java.io.File;
@@ -30,7 +31,7 @@ public class ClassLoaderHookManager {
     public static void init(Context context, String zipFilePath, String optimizedDirectory) {
         try {
             //android 14 开始，动态加载代码dex,必须是只读
-            if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.UPSIDE_DOWN_CAKE){
+            if (AndroidVersionExtKt.isAndroid14Above()){
                 File zipFile = new File(zipFilePath);
                 zipFile.setReadOnly();
             }

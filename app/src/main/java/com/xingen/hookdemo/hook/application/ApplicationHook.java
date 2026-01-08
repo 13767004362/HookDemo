@@ -26,12 +26,12 @@ public class ApplicationHook {
     private static String delegateApplicationName;
     private volatile static boolean isInit = false;
     private static Application delegateApplication;
-    public static void init(String apkFilePath,Application proxyApplication) {
+    public static Application init(String apkFilePath,Application proxyApplication) {
         if (isInit) {
-            return ;
+            return delegateApplication;
         }
         preloadMeta(apkFilePath);
-        setDelegateApplication(proxyApplication);
+        return setDelegateApplication(proxyApplication);
     }
     /**
      * 解析出插件中meta信息

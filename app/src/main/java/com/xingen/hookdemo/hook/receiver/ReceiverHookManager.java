@@ -8,6 +8,8 @@ import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 
 
+import androidx.core.content.ContextCompat;
+
 import java.io.File;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -20,7 +22,7 @@ import java.util.Map;
  * date 2019/6/11.
  */
 public class ReceiverHookManager {
-    private static Map<ActivityInfo, List<? extends IntentFilter>> receivers = new HashMap<>();
+    private static final Map<ActivityInfo, List<? extends IntentFilter>> receivers = new HashMap<>();
 
     public static void init(Context context, String apkFilePath) {
         preloadParseReceiver(apkFilePath);
@@ -29,28 +31,31 @@ public class ReceiverHookManager {
     }
 
     /**
-     *  注册插件中的广播
+     * 注册插件中的广播
+     *
      * @param context
      */
-    private static void registerPluginReceiver(Context context){
+    private static void registerPluginReceiver(Context context) {
         try {
-            ClassLoader classLoader= ReceiverHookManager.class.getClassLoader();
-            for ( ActivityInfo activityInfo:receivers.keySet()){
-                List<? extends IntentFilter> intentFilters=receivers.get(activityInfo);
-                BroadcastReceiver broadcastReceiver=(BroadcastReceiver) classLoader.loadClass(activityInfo.name).newInstance();
-                if (intentFilters!=null&&broadcastReceiver!=null){
-                    for ( IntentFilter intentFilter:intentFilters){
-                         context.getApplicationContext().registerReceiver(broadcastReceiver,intentFilter);
+            ClassLoader classLoader = ReceiverHookManager.class.getClassLoader();
+            for (ActivityInfo activityInfo : receivers.keySet()) {
+                List<? extends IntentFilter> intentFilters = receivers.get(activityInfo);
+                BroadcastReceiver broadcastReceiver = (BroadcastReceiver) classLoader.loadClass(activityInfo.name).newInstance();
+                if (intentFilters != null) {
+                    for (IntentFilter intentFilter : intentFilters) {
+                        //以 Android 14 为目标并动态注册广播应用和服务需要指定exported属性
+                        ContextCompat.registerReceiver(context.getApplicationContext(), broadcastReceiver, intentFilter, ContextCompat.RECEIVER_EXPORTED);
                     }
                 }
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     /**
-     *  解析插件中的广播
+     * 解析插件中的广播
+     *
      * @param apkFilePath
      */
     private static void preloadParseReceiver(String apkFilePath) {
@@ -64,20 +69,20 @@ public class ReceiverHookManager {
             Object packageParser$package = parsePackageMethod.invoke(packageParser, new File(apkFilePath), PackageManager.GET_RECEIVERS);
             // 接着获取到Package中的receivers列表
             Class<?> packageParser$package_Class = packageParser$package.getClass();
-            Field receiversField= packageParser$package_Class.getDeclaredField("receivers");
+            Field receiversField = packageParser$package_Class.getDeclaredField("receivers");
             receiversField.setAccessible(true);
-            List receiversList= (List) receiversField.get(packageParser$package);
-            Class<?> packageParser$Activity_Class =Class.forName("android.content.pm.PackageParser$Activity");
+            List receiversList = (List) receiversField.get(packageParser$package);
+            Class<?> packageParser$Activity_Class = Class.forName("android.content.pm.PackageParser$Activity");
             // intent-filter过滤器
-            Field intentsFiled=packageParser$Activity_Class.getField("intents");
+            Field intentsFiled = packageParser$Activity_Class.getField("intents");
             intentsFiled.setAccessible(true);
             // 获取 name
-            Field infoField=packageParser$Activity_Class.getDeclaredField("info");
+            Field infoField = packageParser$Activity_Class.getDeclaredField("info");
             infoField.setAccessible(true);
-            for (Object receiver:receiversList){
-                ActivityInfo info=(ActivityInfo) infoField.get(receiver);
-                List<? extends IntentFilter> intentFiltersList= (List<? extends IntentFilter>) intentsFiled.get(receiver);
-                receivers.put(info,intentFiltersList);
+            for (Object receiver : receiversList) {
+                ActivityInfo info = (ActivityInfo) infoField.get(receiver);
+                List<? extends IntentFilter> intentFiltersList = (List<? extends IntentFilter>) intentsFiled.get(receiver);
+                receivers.put(info, intentFiltersList);
             }
         } catch (Exception e) {
             e.printStackTrace();
