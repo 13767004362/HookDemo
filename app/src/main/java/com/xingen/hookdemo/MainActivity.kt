@@ -1,6 +1,5 @@
 package com.xingen.hookdemo
 
-import android.app.Activity
 import android.content.ComponentName
 import android.content.ContentValues
 import android.content.Context
@@ -26,7 +25,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
 
 
-    override fun attachBaseContext(newBase: Context?) {
+    override fun attachBaseContext(newBase: Context) {
         super.attachBaseContext(newBase)
         appMainClassLoader = this.classLoader
         val apkFilePath = PluginConfig.getZipFilePath(this)
@@ -168,9 +167,15 @@ class MainActivity : AppCompatActivity() {
             //通过dexClassLoader加载指定包名的类
             val mClass =
                 appMainClassLoader!!.loadClass("com.xingen.plugin.fragment.MessageDialogFragment")
-            val method = mClass.getDeclaredMethod("startDialog", AppCompatActivity::class.java)
+            val companion = mClass.let {
+                val instanceField = it.getDeclaredField("Companion")
+                instanceField.isAccessible = true
+                instanceField.get(null)
+            }
+            val method =
+                companion.javaClass.getDeclaredMethod("startDialog", AppCompatActivity::class.java)
             method.isAccessible = true
-            method.invoke(null, this)
+            method.invoke(companion, this)
         } catch (e: Exception) {
             e.printStackTrace()
         }

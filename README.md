@@ -1,4 +1,5 @@
 
+**android适配版本**: android 16
 
 **前言**：
 >开源盛行的插件化框架有很多，实现方式也有很多种。本项目是介绍如何加载dex文件(java代码)、so库（c++代码）、资源文件（resource）到虚拟机，围绕Android Framework源码，如何启动插件中Activity、Service、BroadcastReceiver、ContentProvider四大组件,从而了解到插件化中核心知识点。

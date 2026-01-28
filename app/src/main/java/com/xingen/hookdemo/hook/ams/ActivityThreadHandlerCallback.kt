@@ -9,7 +9,7 @@ import android.os.Message
  */
 class ActivityThreadHandlerCallback(private val activityThreadHandler: Handler) : Handler.Callback {
     override fun handleMessage(msg: Message): Boolean {
-        AMSHookManager.Utils.recoverActivityIntent(msg)
+        AMSUtils.recoverActivityIntent(msg)
         activityThreadHandler.handleMessage(msg)
         return true
     }

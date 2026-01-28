@@ -4,6 +4,7 @@ import android.app.Service
 import android.content.Intent
 import android.os.Handler
 import android.os.IBinder
+import android.os.Looper
 import android.util.Log
 import android.widget.Toast
 
@@ -24,7 +25,7 @@ class PluginService : Service() {
     }
 
     private fun executeDelayTask() {
-        Handler().postDelayed({
+        Handler(Looper.getMainLooper()).postDelayed({
             Log.i(TAG, " 执行定时任务")
             application.stopService(Intent().setClassName("com.xingen.plugin", PluginService::class.java.name))
         }, 2000)

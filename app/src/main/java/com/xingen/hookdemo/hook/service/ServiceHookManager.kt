@@ -23,6 +23,7 @@ object ServiceHookManager {
     private val serviceMap: MutableMap<String, Service> = HashMap()
     private var appContext: Context? = null
 
+    @JvmStatic
     fun init(context: Context, apkFilePath: String) {
         preloadParseService(apkFilePath)
         appContext = context
@@ -125,7 +126,7 @@ object ServiceHookManager {
             // 没有插件服务在运行，则关闭ProxyService
             appContext!!.stopService(
                 Intent().setClassName(
-                    AMSHookManager.getTargetPackageName(),
+                    AMSHookManager.getTargetPackageName()!!,
                     ProxyService::class.java.getName()
                 )
             )
