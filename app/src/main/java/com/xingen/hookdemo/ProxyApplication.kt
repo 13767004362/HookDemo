@@ -6,6 +6,7 @@ import com.xingen.hookdemo.hook.ams.AMSHookManager
 import com.xingen.hookdemo.hook.application.ApplicationHook
 import com.xingen.hookdemo.hook.classLoader.ClassLoaderHookManager
 import com.xingen.hookdemo.hook.click.ClickHook
+import com.xingen.hookdemo.hook.click.SmartClickHook
 import com.xingen.hookdemo.hook.contentprovider.ContentProviderHookManager
 import com.xingen.hookdemo.hook.pms.PMSHookManger
 import com.xingen.hookdemo.hook.resource.ResourceHookManager
@@ -37,7 +38,8 @@ class ProxyApplication : Application() {
         // 适配android 15 全面模式EdgeToEdge
         HookSystemBar().hookSystemBar(realApplication)
         // hook 全局的点击事件
-        ClickHook.init(realApplication)
+        //ClickHook.init(realApplication)
+        SmartClickHook.init(realApplication)
     }
 
     // 使用HiddenApiBypass 处理android 9及其以上版本的反射问题
