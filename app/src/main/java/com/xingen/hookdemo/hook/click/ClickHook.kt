@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.ViewTreeObserver
 import android.view.ViewTreeObserver.OnGlobalLayoutListener
+import java.lang.reflect.Field
 
 
 /**
@@ -68,16 +69,34 @@ object ClickHook {
         if (auto) {
             // 通过监听 view tree 来实现，自动监听
             val observer: ViewTreeObserver? = rootView.getViewTreeObserver()
-            if (observer == null) {
+            if (observer?.isAlive == true) {
+                observer.addOnGlobalLayoutListener(OnGlobalLayoutListener { task.run() })
+            } else {
                 task.run()
             }
-            observer!!.addOnGlobalLayoutListener(OnGlobalLayoutListener { task.run() })
         } else {
             task.run()
         }
     }
 
     internal object Utils {
+
+
+        /**
+         * 缓存反射 Field，避免每次重复获取
+         */
+        private val mListenerInfoField: Field by lazy {
+            Class.forName("android.view.View").getDeclaredField("mListenerInfo").apply {
+                isAccessible = true
+            }
+        }
+
+        private val mOnClickListenerField: Field by lazy {
+            Class.forName("android.view.View\$ListenerInfo")
+                .getDeclaredField("mOnClickListener")
+                .apply { isAccessible = true }
+        }
+
         /**
          * 获取ViewGroup中具备点击事件的子view
          *
@@ -119,21 +138,14 @@ object ClickHook {
          *
          * @param view
          */
-
-        @Suppress("all")
         internal fun setHookViewClick(view: View?): OnProxyClickListener? {
+            if (view == null) return null
+
             try {
-                val viewClass = Class.forName("android.view.View")
-                val mListenerInfoField = viewClass.getDeclaredField("mListenerInfo")
-                mListenerInfoField.isAccessible = true
                 val mListenerInfoObject = mListenerInfoField.get(view)
                 if (mListenerInfoObject != null) {
-                    val listenerInfoClass = Class.forName("android.view.View\$ListenerInfo")
-                    val mOnClickListenerField =
-                        listenerInfoClass.getDeclaredField("mOnClickListener")
-                    mOnClickListenerField.isAccessible = true
                     val onClickListener =
-                        mOnClickListenerField.get(mListenerInfoObject) as View.OnClickListener?
+                        mOnClickListenerField.get(mListenerInfoObject) as? View.OnClickListener
                     if (onClickListener != null) {
                         //已经处理过快速点击的click，过滤
                         val proxy: OnProxyClickListener?
